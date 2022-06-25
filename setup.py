@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='meteolib',
-    version='0.0.0',
+    version='0.0.1',
     license='EUPL-1.1',
     author="Clemens Druee",
     author_email='druee@uni-trier.de',
