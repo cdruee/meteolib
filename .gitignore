@@ -1,9 +1,6 @@
-# excluded dirs
-literatur/
-pub/
-
 # general
 *~
+literatur/
 
 # debian created by command
 #$ python3 setup.py --command-packages=stdeb.command debianize
@@ -41,6 +38,3 @@ MANIFEST
 # Sphinx documentation
 docs/_build/
 docs/metlib.bib.bakdocs/metlib.bib.sav.tmp
-
-# Tox testing cache
-.tox
