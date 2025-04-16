@@ -3,10 +3,14 @@
 """
 Wind- and turbulence-related claculations and conversions
 """
+import logging
+
 import numpy as np
 
 from ._utils import _check, _only
 from .constants import gn, kappa
+
+logger = logging.getLogger(__name__)
 
 DISPLACEMENT_FACTOR = 6.5
 
@@ -38,7 +42,7 @@ class LogWind(object):
 
     '''
 
-    def __init__(self, ust=None, z0=None, d=0., u=None, z=None,
+    def __init__(self, ust=None, z0=None, d=None, u=None, z=None,
                  u2=None, z2=None):
         loc = locals()
         par = {x: loc[x] for x in ['ust', 'z0', 'd', 'u', 'z', 'u2', 'z2']}
@@ -88,8 +92,10 @@ class LogWind(object):
                 u2 = _check('u2', u2, 'float', gt=u)
                 z2 = _check('z2', z2, 'float', gt=z)
                 z0l = np.min([0.5 * z, 0.01])
+                if z <= DISPLACEMENT_FACTOR * z0l:
+                    raise ValueError('z too low')
                 for i in range(100):
-                    print(z0l, DISPLACEMENT_FACTOR*z0l, z)
+                    logger.debug(format((z0l, DISPLACEMENT_FACTOR*z0l, z)))
                     zz = np.exp((u*np.log(z2-DISPLACEMENT_FACTOR*z0l) -
                                 u2*np.log(z-DISPLACEMENT_FACTOR*z0l)) /
                                 (u - u2))
@@ -108,6 +114,8 @@ class LogWind(object):
                 z = _check('z',   z,  'float', ge=self.d)
                 u2 = _check('u2',  u2, 'float', gt=u)
                 z2 = _check('z2',  z2, 'float', gt=z)
+                if z <= d + d / DISPLACEMENT_FACTOR:
+                    raise ValueError('z below displacement')
                 self.z0 = np.exp(
                     (u*np.log(z2-self.d) - u2*np.log(z-self.d)) / (u - u2))
                 self.ust = u / np.log((z-self.d) / self.z0)
@@ -169,7 +177,7 @@ class DiabaticWind(object):
     def __init__(self, ust=None, z0=None, d=0., u=None, z=None,
                  LOb=None, zoL=None):
         loc = locals()
-        par = {x: loc[x] for x in ['ust', 'z0', 'd', 'u', 'z', 'Lob', 'zoL']}
+        par = {x: loc[x] for x in ['ust', 'z0', 'd', 'u', 'z', 'LOb', 'zoL']}
 
         if _only(par, ['ust', 'z0', 'LOb'], ['d']):
             ust = _check('ust', ust, 'float', ge=0.)
@@ -197,6 +205,9 @@ class DiabaticWind(object):
             self.ust = (kappa * u) / np.log((z-self.d)/self.z0)
             LOb = _check('LOb', LOb, 'float')
             self.LOb = LOb
+            zoL = z / LOb
+            self.ust = ((kappa * u) /
+                        (np.log((z-self.d)/self.z0) - psi_m(zoL)))
 
         elif _only(par, ['u', 'z', 'z0', 'zoL'], ['d']):
             z0 = _check('z0',  z0, 'float',  gt=0.)
@@ -208,9 +219,10 @@ class DiabaticWind(object):
                 self.d = d
             u = _check('u',   u, 'float',   ge=0.)
             z = _check('z',   z, 'float',   ge=self.d)
-            self.ust = (kappa * u) / np.log((z-self.d)/self.z0)
             zoL = _check('zoL', zoL, 'float')
-            self.LOb = self.z/zoL
+            self.LOb = z/zoL
+            self.ust = ((kappa * u) /
+                        (np.log((z-self.d)/self.z0) - psi_m(zoL)))
 
 #    elif _only(par,['u','z','ust',],['d']):
 #      ust = _check('ust', ust, 'float', ge=0.)
@@ -235,8 +247,9 @@ class DiabaticWind(object):
         :rtype: float
         '''
         z = _check('z', z, 'float', ge=0.)
+        zoL = z / self.LOb
         u = (self.ust / kappa) * (np.log((z-self.d) /
-                                         self.z0) - psi_m(self.zoL))
+                                         self.z0) - psi_m(zoL))
         return u
 
     def gradu(self, z):
@@ -248,7 +261,8 @@ class DiabaticWind(object):
         :rtype: float
         '''
         z = _check('z', z, 'float', ge=0.)
-        gu = psi_m(self.zoL) * self.ust / (kappa * (z - self.d))
+        zoL = z / self.LOb
+        gu = psi_m(zoL) * self.ust / (kappa * (z - self.d))
         return gu
 
 # -------------------------------------------------------------------
@@ -280,7 +294,8 @@ def phi_m(zoL):
 def phi_H(zoL):
     '''
     Universal functions for turbulent fluxes of scalars according to
-    [Bus1971]_, as recalculated by [Hog1988]_.
+    [Bus1971]_, using the numerical "modified Kansas expression"
+    valuesas recalculated by [Hog1988]_.
 
     :param zoL: Monin-Boukhov stability parameter z/L, unitless (float).
     :return: univesal fuction value (unitless)
@@ -304,20 +319,23 @@ def phi_H(zoL):
 def psi_m(zoL):
     '''
     Integrated universal functions for momentum according to
-    [Pau1970]_, using the numericcal values by [Hog1988]
+    [Pau1970]_ (unstable) and [HoB1988]_ (stable),
+    using the numerical "modified Kansas expression"
+    values recalculated by [Hog1988]_
     :param zoL: Monin-Boukhov stability parameter z/L, unitless (float).
-    :return: univesal fuction value (unitless)
+    :return: universal fuction value (unitless)
     :rtype: float
     '''
+    zoL = _check('zoL', zoL, 'float')
     phi_1s = 6.0
     phi_1u = 19.3
     if zoL > 0.:
-        psi = 1. * zoL + (phi_1s/2.) * zoL**2
+        psi = - phi_1s * zoL
     else:
-        x = (1 - phi_1u * zoL)**(0.25)
+        x = (1 - phi_1u * zoL) ** 0.25
         psi = (2. * np.log((1. + x) / 2.)
-               + np.log((1. + x**2) / 2.)
-               - 2. * np.atan(x)
+               + np.log((1. + x ** 2) / 2.)
+               - 2. * np.arctan(x)
                + np.pi / 2.)
     return psi
 
@@ -327,19 +345,22 @@ def psi_m(zoL):
 def psi_H(zoL):
     '''
     Integrated universal functions for momentum according to
-    [Pau1970]_, using the numericcal values by [Hog1988]
+    [Pau1970]_ (unstable) and [HoB1988]_ (stable),
+    using the numericcal "modified Kansas expression"
+    values by [Hog1988]_
     :param zoL: Monin-Boukhov stability parameter z/L, unitless (float).
     :return: univesal fuction value (unitless)
     :rtype: float
     '''
-    phi_1s = 7.8
-    phi_1u = 11.6
-    phi_0 = 0.95
+    zoL = _check('zoL', zoL, 'float')
+    phi_2s = 7.8
+    phi_2u = 11.6
+    phi_20 = 0.95
     if zoL > 0.:
-        psi = phi_0 * zoL + (phi_1s/2.) * zoL**2
+        psi = - phi_2s * zoL
     else:
-        x = (1 - phi_1u * zoL)**(0.25)
-        psi = phi_0 * (2. * np.log((1. + x**2) / 2.))
+        x = (1 - phi_2u * zoL) ** 0.25
+        psi = phi_20 * (2. * np.log((1. + x ** 2) / 2.))
     return psi
 
 

@@ -63,7 +63,7 @@ def _check_scalar(name, par, kind, lt=None, le=None, ne=None,
         if lt is not None and val >= lt:
             raise ValueError('parameter {} is not < {}'.format(name, lt))
         if le is not None and val > le:
-            raise ValueError('parameter {} is not <= {}'.format(name, lt))
+            raise ValueError('parameter {} is not <= {}'.format(name, le))
         if ne is not None and val == ne:
             raise ValueError('parameter {} is = {}'.format(name, ne))
         if ge is not None and val < ge:
@@ -84,12 +84,13 @@ def _check_scalar(name, par, kind, lt=None, le=None, ne=None,
 def _check(name, par, kind, lt=None, le=None, ne=None,
            ge=None, gt=None, nan=True, none=False):
     if par is None or pd.api.types.is_scalar(par):
-        return _check_scalar(name, par, kind, lt, le, ne, ge, gt, nan, none)
+        return _check_scalar(name, par, kind, lt, le,
+                             ne, ge, gt, nan, none)
     else:
         res = pd.Series(np.nan, index=range(len(par)))
         for i, p in enumerate(par):
-            res[i] = _check_scalar(name, p, kind, lt, le,
-                                   ne, ge, gt, nan, none)
+            res.iloc[i] = _check_scalar(name, p, kind, lt, le,
+                                        ne, ge, gt, nan, none)
         return res
 
 

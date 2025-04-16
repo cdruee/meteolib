@@ -102,6 +102,9 @@ References
 .. [Hog1988] Högström, U., 1988. Non-dimensional wind and temperature profiles in
     the atmospheric surface layer: A re-evaluation. Bound.-Layer Meteorol.
     **42**, 55–78, 10.1007/BF00119875.
+.. [HoB1988] Holtslag, A.A.M., de Bruin, H.A.R. 1988. Applied Modeling of the
+    Nighttime Surface Energy Balance over Land. J. of Appl. Meteorol.
+    **27**, 689–704, 10.1175/1520-0450(1988)027<0689:amotns>2.0.co;2.
 .. [HyW1983] R. Hyland & A. Wexler, 1983:
     Formulations for the Thermodynamic Properties of the Saturated
     Phases of H2O from 173.5 K to 473.5 K. ASHRAE Transactions, **89** (2A), 20 pp.

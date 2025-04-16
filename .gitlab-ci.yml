@@ -56,7 +56,7 @@ build_pages:
   script:
     - pip install sphinx
     - pip install numpy pandas
-    - python setup.py build_sphinx
+    - sphinx-build -b html docs build/sphinx/html
     - mv build/sphinx/html/ public/
   artifacts:
     paths:

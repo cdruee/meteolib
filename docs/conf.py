@@ -53,9 +53,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'meteolib'
-copyright = u'2019, Me'
-author = u'Me'
+project = meteolib.__title__
+copyright = meteolib.__copyright__
+author = meteolib.__author__
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -148,8 +148,8 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'meteolib.tex', u'meteolib Documentation',
-     u'Me', 'manual'),
+    (master_doc, u'meteolib.tex', u'meteolib Documentation',
+     u'Me', u'manual'),
 ]
 
 
@@ -158,7 +158,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'meteolib', u'meteolib Documentation',
+    (master_doc, u'meteolib', u'meteolib Documentation',
      [author], 1)
 ]
 
@@ -169,9 +169,9 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'meteolib', u'meteolib Documentation',
-     author, 'meteolib', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, u'meteolib', u'meteolib Documentation',
+     author, u'meteolib', u'One line description of project.',
+     u'Miscellaneous'),
 ]
 
 
