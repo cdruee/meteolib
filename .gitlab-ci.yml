@@ -121,16 +121,15 @@ merge_github:
    - git remote add -t github github "ssh://git@github.com/$GITHUB_USER/$CI_PROJECT_NAME.git"
    - git branch -avv
    # first synch repo and from github.com branches
-   #- git fetch --refetch -f github github
-   #- git branch -avv
+   - git fetch --refetch -f github github
+   - git branch -avv
    - git checkout github
    - git branch -avv
-   - rm -fr ".git/rebase-merge"
-   - git pull --rebase origin -X theirs github
+   - git pull --rebase origin  github
    - git branch -avv
    # puch synched branches
    - git push origin github
-   - git push -f github github
+   - git push github github
    - git branch -avv
    # then merge repo main branch into local working dir (github branch)
    - git merge --squash origin/main -X theirs --allow-unrelated-histories | 2>&1 tee git.out

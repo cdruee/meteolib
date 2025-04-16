@@ -1,11 +1,32 @@
-.. meteolib documentation master file, created by
-   sphinx-quickstart on Fri Aug  2 15:02:42 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
 
 Welcome to meteolib's documentation!
 ========================================
 
+.. toctree::
+   :maxdepth: 3
+   :caption: Contents:
+
+Requirements:
+-------------
+
+    pip install numpy pandas
+
+Installation:
+-------------
+As root or Administrator:
+
+.. code-block:: bash
+
+  pip install meteolib
+
+or as normal user:
+
+.. code-block:: bash
+
+  pip install --user meteolib
+
+or manually install the sources
+available from `GitHub <https://github.com/cdruee/meteolib>`_
 
 
 General

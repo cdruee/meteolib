@@ -10,8 +10,16 @@ Requirements:
 
 Installation:
 -------------
+As root or Administrator:
 
-    python3 setup.py install
+    pip install meteolib
+
+or as normal user: 
+
+    pip install --user meteolib
+
+or manually install the sources 
+available from [GitHub](https://github.com/cdruee/meteolib)
 
 
 Documentation: <http://druee.gitlab-pages.uni-trier.de/meteolib/>
