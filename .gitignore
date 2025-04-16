@@ -1,5 +1,13 @@
+# excluded dirs
+literatur/
+pub/
+
 # general
 *~
+
+# debian created by command
+#$ python3 setup.py --command-packages=stdeb.command debianize
+debian/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -32,3 +40,4 @@ MANIFEST
 
 # Sphinx documentation
 docs/_build/
+docs/metlib.bib.bakdocs/metlib.bib.sav.tmp
