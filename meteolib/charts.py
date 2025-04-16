@@ -4,17 +4,27 @@
 provides meteorogical charts
 """
 import logging
+import os
+
 import meteolib.humidity
 import meteolib.standard
 import numpy as np
 import pandas as pd
 
 try:
+    import matplotlib
+    if os.name == 'posix' and "DISPLAY" not in os.environ:
+        matplotlib.use('Agg')
+        have_display = False
+    else:
+        have_display = True
     from matplotlib import pyplot as plt
     have_matplotlib = True
 except ImportError:
+    matplotlib = None
     plt = None
     have_matplotlib = False
+    have_display = False
 
 from .constants import R, Lv, cp
 from .humidity import Humidity
@@ -206,6 +216,8 @@ def stueve(p=None, t=None, td=None, style=None, title=None,
     """
     if not have_matplotlib:
         raise EnvironmentError('matplotlib not available')
+    if fname is None and not have_display:
+        raise EnvironmentError('no display, cannot show chart')
 
     def p2z(p: float) -> float:
         r"""

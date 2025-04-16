@@ -26,12 +26,6 @@ Constants
 .. automodule:: meteolib.constants
    :members:
 
-Datasets
----------
-.. toctree::
-
-   dataset
-
 Evapotranspiration
 ------------------
 
