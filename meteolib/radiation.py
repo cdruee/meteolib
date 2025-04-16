@@ -9,12 +9,15 @@ earth's clock error values are taken from [Esp2006]_.
 
 
 """
-#import datetime as dt
-import numpy as np
-import pandas as pd
-import pytz
 
+import datetime as dt
 import logging
+
+import numpy as np
+
+import pandas as pd
+
+import pytz
 
 from ._utils import _check, _expand_to_series_like
 
@@ -366,11 +369,14 @@ _EARTH_PERIODIC_TERMS_DATA_R = [
     ]
 ]
 
-_EARTH_PERIODIC_TERMS_L = [pd.DataFrame.from_records(x, columns=['A', 'B', 'C'])
+_EARTH_PERIODIC_TERMS_L = [pd.DataFrame.from_records(x,
+                                                     columns=['A', 'B', 'C'])
                            for x in _EARTH_PERIODIC_TERMS_DATA_L]
-_EARTH_PERIODIC_TERMS_B = [pd.DataFrame.from_records(x, columns=['A', 'B', 'C'])
+_EARTH_PERIODIC_TERMS_B = [pd.DataFrame.from_records(x,
+                                                     columns=['A', 'B', 'C'])
                            for x in _EARTH_PERIODIC_TERMS_DATA_B]
-_EARTH_PERIODIC_TERMS_R = [pd.DataFrame.from_records(x, columns=['A', 'B', 'C'])
+_EARTH_PERIODIC_TERMS_R = [pd.DataFrame.from_records(x,
+                                                     columns=['A', 'B', 'C'])
                            for x in _EARTH_PERIODIC_TERMS_DATA_R]
 
 # ---------------------------------------------------------------------
@@ -521,7 +527,7 @@ _NUTATION_PERIODIC_TERMS_PE = pd.DataFrame.from_records(
 
 
 class _spa_location():
-    def __init__(self, time: pd.datetime, lat,
+    def __init__(self, time: dt.datetime, lat,
                  lon, ele=0., pp=None, tk=None):
 
         if time.tzinfo is None:
@@ -597,7 +603,7 @@ class _spa_location():
 
     def delta_eps(self):
         if np.isnan(self._delta_eps):
-            self._delta_psi, self._delta_eps = _spa_nutation_longitude_and_obliquity(
+            self._delta_psi, self._delta_eps = _spa_nutation_lon_and_obliquity(
                 self)
         return self._delta_eps
 
@@ -613,14 +619,14 @@ class _spa_location():
 
     def delta_psi(self):
         if np.isnan(self._delta_psi):
-            self._delta_psi, self._delta_eps = _spa_nutation_longitude_and_obliquity(
+            self._delta_psi, self._delta_eps = _spa_nutation_lon_and_obliquity(
                 self)
         return self._delta_psi
 
 
 # ---------------------------------------------------------------------
 
-def _spa_julian_day(time: pd.datetime):
+def _spa_julian_day(time: dt.datetime):
     '''
     Calculate the Julian Day (JD)
 
@@ -640,14 +646,14 @@ def _spa_julian_day(time: pd.datetime):
         M = M + 12
         Y = Y - 1
 
-    JD = (np.int(365.25 * (Y + 4716.))
-          + np.int(30.6001 * (M + 1))
+    JD = (np.int64(365.25 * (Y + 4716.))
+          + np.int64(30.6001 * (M + 1))
           + D - 1524.5
           )
 
     if JD > 2299160.0:
-        a = np.int(Y / 100)
-        JD = JD + (2 - a + np.int(a / 4.))
+        a = np.int64(Y / 100)
+        JD = JD + (2 - a + np.int64(a / 4.))
 
     logging.debug('Julian Day (JD): %f' % JD)
     return JD
@@ -866,7 +872,8 @@ def _spa_argument_vector_X(loc):
 
 def __spa_delta_PE(i, X, loc):
     '''
-    For each row i in Table A4.3, calculate the terms delta psi and delta epsilon
+    For each row i in Table A4.3,
+    calculate the terms delta psi and delta epsilon
     '''
 
     ai = _NUTATION_PERIODIC_TERMS_PE['a'][i]
@@ -912,7 +919,7 @@ def __spa_delta_PE(i, X, loc):
 #    return delta_eps
 
 
-def _spa_nutation_longitude_and_obliquity(loc):
+def _spa_nutation_lon_and_obliquity(loc):
     '''
     Calculate the nutation in longitude, delta psi (in degrees),
     Calculate the nutation in obliquity, delta_eps (in degrees)
@@ -1019,7 +1026,8 @@ def _spa_geocentric_declination(loc):
     epsilon_rad = np.deg2rad(loc.epsilon())
     lamda_rad = np.deg2rad(loc.lamda())
     delta_rad = np.arcsin(np.sin(beta_rad) * np.cos(epsilon_rad) +
-                          np.cos(beta_rad) * np.sin(epsilon_rad) * np.sin(lamda_rad))
+                          np.cos(beta_rad) * np.sin(epsilon_rad) *
+                          np.sin(lamda_rad))
     delta = np.rad2deg(delta_rad)
     logging.debug('Geocentric sun declination, delta: %f' % delta)
     return delta
@@ -1075,7 +1083,8 @@ def _spa_topocentric_sun_right_ascension_parallax(loc):
     h_rad = np.deg2rad(loc.H())
     delta_rad = np.deg2rad(loc.delta())
     delta_alpha_rad = np.arctan2((-x * np.sin(xi_rad) * np.sin(h_rad)),
-                                 (np.cos(delta_rad) - x * np.sin(xi_rad) * np.cos(h_rad)))
+                                 (np.cos(delta_rad) - x * np.sin(xi_rad) *
+                                  np.cos(h_rad)))
     delta_alpha = np.rad2deg(delta_alpha_rad)
     logging.debug(
         'parallax in sun right ascension, delta_alpha: %f' % delta_alpha)
@@ -1145,7 +1154,8 @@ def _spa_topocentric_elevation_angle(loc):
     # Calculate the topocentric elevation angle without atmospheric refraction
     # correction, e0 (in degrees),
     e0 = np.rad2deg(np.arcsin(np.sin(lat_rad) * np.sin(delta_prime_rad) +
-                              np.cos(lat_rad) * np.cos(delta_prime_rad) * np.cos(h_prime_rad)))
+                              np.cos(lat_rad) * np.cos(delta_prime_rad) *
+                              np.cos(h_prime_rad)))
     logging.debug('topocentric_elevation_angle e0: %f' % e0)
     return e0
 
@@ -1336,7 +1346,7 @@ def _spa_day_to_hr(dayfrac, timezone):
     return hr
 
 
-def _spa_rise_transit_set(time: pd.datetime, lat, lon,
+def _spa_rise_transit_set(time: dt.datetime, lat, lon,
                           ele, pp, tk, approx=False):
     '''
     Calculate Sunrise, Sun Transit, and Sunset as hours of day
@@ -1347,7 +1357,7 @@ def _spa_rise_transit_set(time: pd.datetime, lat, lon,
     loc = _spa_location(time, lat, lon, ele, pp, tk)
 
     # location but with time 00 UT
-    utc0 = pd.datetime(loc.utc.year, loc.utc.month, loc.utc.day,
+    utc0 = dt.datetime(loc.utc.year, loc.utc.month, loc.utc.day,
                        0, 0, 0, 0, pytz.utc)
     loc0 = _spa_location(utc0, lat, lon, ele, pp, tk)
 
@@ -1544,39 +1554,47 @@ def fast_rise_transit_set(time, lat, lon):
         # Eccent Earth Orbit
         K2 = 0.016708634 - G2 * (0.000042037 + 0.0000001267 * G2)
         # Sun Eq of Ctr
-        L2 = np.sin(np.deg2rad(J2)) * (1.914602 - G2 * (0.004817 + 0.000014 * G2)) + np.sin(
-            np.deg2rad(2 * J2)) * (0.019993 - 0.000101 * G2) + np.sin(np.deg2rad(3 * J2)) * 0.000289
+        L2 = (np.sin(np.deg2rad(J2)) * (1.914602 -
+                                        G2 * (0.004817 + 0.000014 * G2)) +
+              np.sin(np.deg2rad(2 * J2)) * (0.019993 - 0.000101 * G2) +
+              np.sin(np.deg2rad(3 * J2)) * 0.000289
+              )
         # Sun True Long (deg)
         M2 = I2 + L2
         # Sun True Anom (deg)
-        #N2 = J2+L2
+        # N2 = J2+L2
         # Sun Rad Vector (AUs)
-        #O2 = (1.000001018*(1-K2*K2))/(1+K2*np.cos(np.deg2rad(N2)))
+        # O2 = (1.000001018*(1-K2*K2))/(1+K2*np.cos(np.deg2rad(N2)))
         # Sun App Long (deg)
         P2 = M2 - 0.00569 - 0.00478 * \
             np.sin(np.deg2rad(125.04 - 1934.136 * G2))
         # Mean Obliq Ecliptic (deg)
-        Q2 = 23 + \
-            (26 + ((21.448 - G2 * (46.815 + G2 * (0.00059 - G2 * 0.001813)))) / 60) / 60
+        Q2 = 23 + (26 + ((21.448 -
+                          G2 * (46.815 +
+                                G2 * (0.00059 -
+                                      G2 * 0.001813)))) / 60) / 60
         # Obliq Corr (deg)
         R2 = Q2 + 0.00256 * np.cos(np.deg2rad(125.04 - 1934.136 * G2))
         # Sun Rt Ascen (deg)
-        #S2 = np.rad2deg(np.arctan2(np.cos(np.deg2rad(P2)), np.cos(np.deg2rad(R2))*np.sin(np.deg2rad(P2))))
+        # S2 = np.rad2deg(np.arctan2(np.cos(np.deg2rad(P2)),
+        #      np.cos(np.deg2rad(R2))*np.sin(np.deg2rad(P2))))
         # Sun Declin (deg)
         T2 = np.rad2deg(
             np.arcsin(np.sin(np.deg2rad(R2)) * np.sin(np.deg2rad(P2))))
         # var y
         U2 = np.tan(np.deg2rad(R2 / 2)) * np.tan(np.deg2rad(R2 / 2))
         # Eq of Time (minutes)
-        V2 = 4 * np.rad2deg(U2 * np.sin(2 * np.deg2rad(I2)) - 2 * K2 * \
-            np.sin(np.deg2rad(J2)) + 4 * K2 * U2 * np.sin(np.deg2rad(
-            J2)) * np.cos(2 * np.deg2rad(I2)) \
-            - 0.5 * U2 * U2 * np.sin(4 * np.deg2rad(I2)) \
-            - 1.25 * K2 * K2 * np.sin(2 * np.deg2rad(J2)))
+        V2 = 4 * np.rad2deg(U2 * np.sin(2 * np.deg2rad(I2)) -
+                            2 * K2 * np.sin(np.deg2rad(J2)) +
+                            4 * K2 * U2 * np.sin(
+                                np.deg2rad(J2)) * np.cos(2 * np.deg2rad(I2)) -
+                            0.5 * U2 * U2 * np.sin(4 * np.deg2rad(I2)) -
+                            1.25 * K2 * K2 * np.sin(2 * np.deg2rad(J2)))
         # HA Sunrise (deg)
-        W2 = np.rad2deg(np.arccos(np.cos(np.deg2rad(90.833)
-            ) / (np.cos(np.deg2rad(lat)) * np.cos(np.deg2rad(T2))) \
-            - np.tan(np.deg2rad(lat)) * np.tan(np.deg2rad(T2))))
+        W2 = np.rad2deg(np.arccos(
+            np.cos(np.deg2rad(90.833)) /
+            (np.cos(np.deg2rad(lat)) * np.cos(np.deg2rad(T2))) -
+            np.tan(np.deg2rad(lat)) * np.tan(np.deg2rad(T2))))
         # Solar Noon (LST)
         X2 = (720 - 4 * lon - V2 + tz * 60) / 1440
         # Sunrise Time (LST)
@@ -1691,46 +1709,56 @@ def fast_sun_position(time, lat, lon):
         # Eccent Earth Orbit
         K2 = 0.016708634 - G2 * (0.000042037 + 0.0000001267 * G2)
         # Sun Eq of Ctr
-        L2 = np.sin(np.deg2rad(J2)) * (1.914602 - G2 * (0.004817 + 0.000014 * G2)) + np.sin(
-            np.deg2rad(2 * J2)) * (0.019993 - 0.000101 * G2) + np.sin(np.deg2rad(3 * J2)) * 0.000289
+        L2 = (np.sin(np.deg2rad(J2)) * (1.914602 -
+                                        G2 * (0.004817 + 0.000014 * G2)) +
+              np.sin(np.deg2rad(2 * J2)) * (0.019993 - 0.000101 * G2) +
+              np.sin(np.deg2rad(3 * J2)) * 0.000289
+              )
         # Sun True Long (deg)
         M2 = I2 + L2
         # Sun True Anom (deg)
-        #N2 = J2+L2
+        # N2 = J2+L2
         # Sun Rad Vector (AUs)
-        #O2 = (1.000001018*(1-K2*K2))/(1+K2*np.cos(np.deg2rad(N2)))
+        # O2 = (1.000001018*(1-K2*K2))/(1+K2*np.cos(np.deg2rad(N2)))
         # Sun App Long (deg)
         P2 = M2 - 0.00569 - 0.00478 * \
             np.sin(np.deg2rad(125.04 - 1934.136 * G2))
         # Mean Obliq Ecliptic (deg)
-        Q2 = 23 + \
-            (26 + ((21.448 - G2 * (46.815 + G2 * (0.00059 - G2 * 0.001813)))) / 60) / 60
+        Q2 = 23 + (26 + ((21.448 -
+                          G2 * (46.815 +
+                                G2 * (0.00059 -
+                                      G2 * 0.001813)))) / 60) / 60
         # Obliq Corr (deg)
         R2 = Q2 + 0.00256 * np.cos(np.deg2rad(125.04 - 1934.136 * G2))
         # Sun Rt Ascen (deg)
-        #S2 = np.rad2deg(np.arctan2(np.cos(np.deg2rad(P2)), np.cos(np.deg2rad(R2))*np.sin(np.deg2rad(P2))))
+        # S2 = np.rad2deg(np.arctan2(np.cos(np.deg2rad(P2)),
+        #      np.cos(np.deg2rad(R2))*np.sin(np.deg2rad(P2))))
         # Sun Declin (deg)
         T2 = np.rad2deg(
             np.arcsin(np.sin(np.deg2rad(R2)) * np.sin(np.deg2rad(P2))))
         # var y
         U2 = np.tan(np.deg2rad(R2 / 2)) * np.tan(np.deg2rad(R2 / 2))
         # Eq of Time (minutes)
-        V2 = 4 * np.rad2deg(U2 * np.sin(2 * np.deg2rad(I2)) \
-            - 2 * K2 * np.sin(np.deg2rad(J2)) \
-            + 4 * K2 * U2 * np.sin(np.deg2rad(J2)) * np.cos(2 * np.deg2rad(I2)) \
-            - 0.5 * U2 * U2 * np.sin(4 * np.deg2rad(I2)) \
-            - 1.25 * K2 * K2 * np.sin(2 * np.deg2rad(J2)))
+        V2 = 4 * np.rad2deg(U2 * np.sin(2 * np.deg2rad(I2))
+                            - 2 * K2 * np.sin(np.deg2rad(J2))
+                            + 4 * K2 * U2 *
+                            np.sin(np.deg2rad(J2)) * np.cos(2 * np.deg2rad(I2))
+                            - 0.5 * U2 * U2 * np.sin(4 * np.deg2rad(I2))
+                            - 1.25 * K2 * K2 * np.sin(2 * np.deg2rad(J2)))
         # HA Sunrise (deg)
-        #W2 = np.rad2deg(np.arccos(np.cos(np.deg2rad(90.833)) / (np.cos(np.deg2rad(lat))
-        #    * np.cos(np.deg2rad(T2))) - np.tan(np.deg2rad(lat)) * np.tan(np.deg2rad(T2))))
+        # W2 = np.rad2deg(np.arccos(np.cos(np.deg2rad(90.833)) /
+        #                           (np.cos(np.deg2rad(lat)) *
+        #                            np.cos(np.deg2rad(T2))) -
+        #                           np.tan(np.deg2rad(lat)) *
+        #                           np.tan(np.deg2rad(T2))))
         # Solar Noon (LST)
-        #X2 = (720-4*lon-V2+tz*60)/1440
+        # X2 = (720-4*lon-V2+tz*60)/1440
         # Sunrise Time (LST)
-        #Y2 = X2-W2*4/1440
+        # Y2 = X2-W2*4/1440
         # Sunset Time (LST)
-        #Z2 = X2+W2*4/1440
+        # Z2 = X2+W2*4/1440
         # Sunlight Duration (minutes)
-        #AA2 = 8*W2
+        # AA2 = 8*W2
         # True Solar Time (min)
         AB2 = (E2 * 1440 + V2 + 4 * lon - 60 * tz) % 1440.
         # Hour Angle (deg)
@@ -1739,8 +1767,11 @@ def fast_sun_position(time, lat, lon):
         else:
             AC2 = AB2 / 4 - 180
         # Solar Zenith Angle (deg)
-        AD2 = np.rad2deg(np.arccos(np.sin(np.deg2rad(lat)) * np.sin(np.deg2rad(T2)) +
-            np.cos(np.deg2rad(lat)) * np.cos(np.deg2rad(T2)) * np.cos(np.deg2rad(AC2))))
+        AD2 = np.rad2deg(np.arccos(np.sin(np.deg2rad(lat)) *
+                                   np.sin(np.deg2rad(T2)) +
+                                   np.cos(np.deg2rad(lat)) *
+                                   np.cos(np.deg2rad(T2)) *
+                                   np.cos(np.deg2rad(AC2))))
         # Solar Elevation Angle (deg)
         AE2 = 90. - AD2
         # Approx Atmospheric Refraction (deg)
@@ -1764,15 +1795,17 @@ def fast_sun_position(time, lat, lon):
         AG2 = AE2 + AF2
         # Solar Azimuth Angle (deg cw from N)
         if AC2 > 0:
-            AH2 = (np.rad2deg(np.arccos(((np.sin(np.deg2rad(lat)) \
-                                          * np.cos(np.deg2rad(AD2))) -
-                   np.sin(np.deg2rad(T2))) / (np.cos(np.deg2rad(lat)) \
-                         * np.sin(np.deg2rad(AD2))))) + 180) % 360.
+            AH2 = (np.rad2deg(np.arccos(((np.sin(np.deg2rad(lat)) *
+                                          np.cos(np.deg2rad(AD2))) -
+                   np.sin(np.deg2rad(T2))) / (np.cos(np.deg2rad(lat)) *
+                                              np.sin(np.deg2rad(AD2))
+                                              ))) + 180) % 360.
         else:
-            AH2 = (540 - np.rad2deg(np.arccos(((np.sin(np.deg2rad(lat)) \
-                                                * np.cos(np.deg2rad(AD2))) -
-                   np.sin(np.deg2rad(T2))) / (np.cos(np.deg2rad(lat)) \
-                         * np.sin(np.deg2rad(AD2)))))) % 360.
+            AH2 = (540 - np.rad2deg(np.arccos(((np.sin(np.deg2rad(lat)) *
+                                                np.cos(np.deg2rad(AD2))) -
+                   np.sin(np.deg2rad(T2))) / (np.cos(np.deg2rad(lat)) *
+                                              np.sin(np.deg2rad(AD2))
+                                              )))) % 360.
         # day -> hour of day
         ele[i] = AG2
         azi[i] = AH2

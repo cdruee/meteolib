@@ -1,12 +1,72 @@
-image: python:3.6
+stages:
+  - build
+  - test
+  - deploy
+  - release
 
-pages:
+variables:
+  PACKAGE_VERSION: "$CI_COMMIT_TAG"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/dist/${PACKAGE_VERSION}"
+
+build_sdist:
+  image: python:latest
+  stage: build
+  rules:
+    - if: $CI_COMMIT_TAG
   script:
-  - pip install numpy pandas 
-  - pip install setuptools
-  - pip install sphinx
-  - python setup.py build_sphinx
-  - mv build/sphinx/html/ public/
+    - python setup.py sdist
+  artifacts:
+    paths:
+      - dist
+
+test_latest:
+  image: python:latest
+  stage: test
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - pip install tox numpy pandas flake8
+    - tox
+
+
+dploy_pages:
+  image: python:latest
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_TAG
+  script:
+    - pip install numpy pandas
+    - pip install sphinx
+    - python setup.py build_sphinx
+    - mv build/sphinx/html/ public/
   artifacts:
     paths:
     - public
+
+deploy_upload:
+  stage: deploy
+  image: python:latest # curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/  # Run if tah is v0.00.00...
+  script:
+    - apt install curl
+    - export PACKAGE_FILE=$( ls dist/ )
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/${PACKAGE_FILE} "${PACKAGE_REGISTRY_URL}/${PACKAGE_FILE}"
+    - mkdir cache
+    - echo "${PACKAGE_FILE}" > cache/PACKAGE_FILE
+  artifacts:
+    paths:
+    - cache
+
+release_release:
+  image: registry.gitlab.com/gitlab-org/release-cli:latest
+  stage: release
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/  # Run if tah is v0.00.00...
+  script:
+    - echo "Running the release job."
+    - export PACKAGE_FILE=$( cat cache/PACKAGE_FILE )
+    - echo "-#$PACKAGE_FILE#-"
+    - |
+      release-cli create --description "$CI_COMMIT_TAG" --tag-name "$PACKAGE_VERSION" --assets-link "{\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_FILE}\",\"name\":\"Python install package: ${PACKAGE_FILE}\",\"link_type\":\"package\"}"

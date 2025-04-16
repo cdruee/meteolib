@@ -3,7 +3,7 @@
 __title__ = 'meteolib'
 __description__ = 'Python standard functions for meteorology.'
 __url__ = ''
-__version__ = '0.10.0'
+__version__ = '0.11.0'
 __author__ = u'Clemens Drüe'
 __author_email__ = 'druee@uni-trier.de'
 __license__ = 'EUPL-1.1'

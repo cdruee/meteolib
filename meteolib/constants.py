@@ -13,22 +13,20 @@ physical constants
 sigma = 5.570367E-8
 
 #: Absolute temperature (:math:`K`)
-#: of the normal ice point 
+#: of the normal ice point
 #: Offset between Kelvin and Celsius Tmeperature scales.
 #: Adopted by WMO in [WMO_8]_.
 Tzero = 273.15
 
 #: Absolute temperature (:math:`K`)
-#: of the triple point of water 
+#: of the triple point of water
 #: by definition of [ITS-90]_.
 #: Adopted by WMO in [WMO_8]_.
 Ttriple = 273.16
 
 
-
-
-#:  Standard acceleration of gravity (:math:`m s^{-2}`). 
-#:  Adopted by WMO in [WMO_8]_. 
+#:  Standard acceleration of gravity (:math:`m s^{-2}`).
+#:  Adopted by WMO in [WMO_8]_.
 gn = 9.806
 
 #: Density of mercury (:math:`kg m^{–3}`) at 0 °C.
@@ -41,7 +39,7 @@ rhoHg = 1.35951E4
 #: -- adopted by WMO in [WMO_8]_.
 pzero = 101320.
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # WMO 180, Table 4.1: THERMODYNAMIC CONSTANTS AND FUNCTIONS
 # (except constants above)
 
@@ -53,7 +51,7 @@ M = 28.9644E-3
 
 #: Gas constant for 1 mole of ideal gas (:math:`J mol^{-1}`)
 #: Adopted by WMO in [WMO188]_.
-Rstar = 8.31432 
+Rstar = 8.31432
 
 #: Gas constant for dry air (:math:`J kg^-1 K^-1`).
 #: Adopted by WMO in [WMO188]_.
@@ -69,31 +67,35 @@ Rw = 461.51
 
 # 2. Specific heat capacities
 
-#: Specific heat capacity of **dry air** at constant pressure (:math:`J kg^-1 K^-1`).
+#: Specific heat capacity of **dry air**
+#: at constant pressure (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cpt`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cpt`
 cp = 1005.
 
-#: Specific heat capacity of **dry air** at constant volume (:math:`J kg^-1 K^-1`).
+#: Specific heat capacity of **dry air**
+#: at constant volume (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
 cv = 718.
 
 #: Specific heat capacity of **liquid water** (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cwt`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cwt`
 cw = 4179.
 
 #: Specific heat capacity of frozen water / **ice**  (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cit`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cit`
 ci = 2090.
 
-#: Specific heat capacity of **water vapor** at constant pressure (:math:`J kg^-1 K^-1`).
+#: Specific heat capacity of **water vapor**
+#: at constant pressure (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cpvt`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.cpvt`
 cpv = 1850.
 
-#: Specific heat capacity of **water vapor** at constant volume (:math:`J kg^-1 K^-1`).
+#: Specific heat capacity of **water vapor**
+#: at constant volume (:math:`J kg^-1 K^-1`).
 #: Recommended by WMO in [WMO188]_.
 cvv = 1390.
 
@@ -102,15 +104,15 @@ cvv = 1390.
 
 #: Specific heat of sublimation (:math:`J kg^-1`).
 #: Recommended by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.Lst`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.Lst`
 Ls = 2.835E6
 
 #: Specific heat of vaporization / evaportaion (:math:`J kg^-1`).
 #: Mean value named by WMO in [WMO188]_.
-#: For a temperature-dependent formulation see :py:meth:`meteolib.thermodyn.Lvt`
+#: For temperature-dependent formulation see :py:meth:`meteolib.thermodyn.Lvt`
 Lv = 2.501E6
 
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 # other constants
 
 #: Apparent molecular weight of carbon dioxide (:math:`kg mol^{-1}`).
@@ -128,4 +130,3 @@ kappa = 0.40
 #: said to be defined by WMO and used in WMO documents
 #: and many reserch papares, no immediate source.
 solar = 1367.
-
