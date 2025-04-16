@@ -1,25 +1,29 @@
-from setuptools import setup, find_packages
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
+import os
+
+from setuptools import setup
+
+v = {}
+v_path = os.path.join(*'meteolib/_version.py'.split('/'))
+with open(v_path) as v_file:
+    exec(v_file.read(), v)
 
 setup(
-    name='meteolib',
-    version='0.0.1',
-    license='EUPL-1.1',
-    author="Clemens Druee",
-    author_email='druee@uni-trier.de',
-    packages=find_packages('src'),
-    package_dir={'': 'src'},
-    url='https://github.com/cdruee/meteolib',
-    keywords='meteorology',
+    name=v['__title__'],
+    version=v['__version__'],
+    packages=[v['__title__']],
+    package_dir={v['__title__']: v['__title__']},
+    license=v['__license__'],
+    author=v['__author__'],
+    author_email=v['__author_email__'],
+    url=v['__url__'],
+    description=v['__description__'],
+    long_description=open('README.md').read(),
     install_requires=[
-          'numpy', 'pandas'
-      ],
-    long_description='''
-    This module conatins standard equations, constants and conversions
-    for general use in meteorology. Values and methods herin are are either
-    adopted or recommended by the World meteorological Organization (WMO)
-    and similar bodies or backed by peer-reviewed literature and fully citable.
-
-    Note: This module is in a stub state until publication of the corresponding paper
-    '''
+        'numpy',
+        'pandas',
+    ],
+    keywords='meteorology',
 )
