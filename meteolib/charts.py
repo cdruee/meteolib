@@ -7,6 +7,7 @@ import logging
 import meteolib.humidity
 import meteolib.standard
 import numpy as np
+import pandas as pd
 
 try:
     from matplotlib import pyplot as plt
@@ -16,10 +17,12 @@ except ImportError:
     have_matplotlib = False
 
 from .constants import R, Lv, cp
+from .humidity import Humidity
 from .standard import altitude, p_iso, T_iso
 from .temperature import KtoC, CtoK, inv_Tpot
-from .temperature import POTENTIAL_REFERENCE_PRESSURE as pref
-from .humidity import Humidity
+from .temperature import POTENTIAL_REFERENCE_PRESSURE as PREF
+
+logger = logging.getLogger()
 
 
 # ----------------------------------------------------------------------
@@ -113,7 +116,7 @@ def satad(th, pmax, pmin, label=None):
     else:
         thw = CtoK(thw)  # K
 
-    p0 = pref / 100.  # hPa
+    p0 = PREF / 100.  # hPa
     dp = -1  # hPa
     pp = np.arange(p0, pmin, dp)  # hPa
 
@@ -167,11 +170,11 @@ def tdm(m, pmax, pmin):
 
 
 # ----------------------------------------------------------------------
-# adiabatic process lines
+# Stüve Diagram
 # ----------------------------------------------------------------------
 
 
-def stueve(p=None, t=None, td=None, style=None,
+def stueve(p=None, t=None, td=None, style=None, title=None,
            fname=None, fmt=None, dpi=300):
     """
     Produces a Stüve plot in the given style.
@@ -187,6 +190,8 @@ def stueve(p=None, t=None, td=None, style=None,
     :type td: list[float]
     :param style: optional, plot style. Currently available are
       `wyoming`, `dwd_a0` and `dwd_a4`. Defaults to `dwd_a0`.
+    :type style: str
+    :param title: optional, plot title.
     :type style: str
     :param fname: optional, filename (optionally including path)
       to save the plot in.
@@ -228,7 +233,6 @@ def stueve(p=None, t=None, td=None, style=None,
 
     if style is None:
         style = 'dwd_a0'
-    print(style)
     if style == 'dwd_a0':
         sty = {
             "figsize": (32, 40),
@@ -315,7 +319,7 @@ def stueve(p=None, t=None, td=None, style=None,
     elif style == 'dwd_a4':
         sty = {
             "figsize": (8, 11),
-            "trange": (-55, 45),
+            "trange": (-60, 40),
             "prange": (1050, 200),
             "meters": [
                 {"at": np.arange(0., 12000., 1000.),
@@ -495,6 +499,9 @@ def stueve(p=None, t=None, td=None, style=None,
     elif munit == "kft":
         mstr = "kft"
         mfac = 3.28084 / 1000.
+    else:
+        mstr = ""
+        mfac = 1.
     ax2 = ax1.twinx()
     ax2.set_ylim(zmin, zmax)
     ax2.set_yticks([p2z(p_iso(x, hPa=True)) for x in meter],
@@ -548,7 +555,98 @@ def stueve(p=None, t=None, td=None, style=None,
                  linestyle=sty["dewpoint"]["style"],
                  linewidth=sty["dewpoint"]["width"])
 
+    if title is not None:
+        plt.title(label=title)
     if fname:
         plt.savefig(fname, format=fmt, dpi=dpi)
     else:
         plt.show()
+
+
+# ----------------------------------------------------------------------
+# plot archived radiosonde
+# ----------------------------------------------------------------------
+
+
+def plot_radisonde(data, diagram=None, **kwargs):
+    """
+    Plot a radiosonde sounding contained in `data`
+
+    :param data: Sounding data. Either a pandas DataFrame or a dict
+      of array-like objects. If data is a dict, all array-like objects
+      must be one-dmensional and of the same lenght.
+      `data` must contain columns / elements for
+      pressure, temperature and humidity.
+      Humidity can be specified as dew point, relative humidity or
+      dewpoint depression.
+    :type data: `pandas.DataFrame` or `dict`
+    :param diagram: type of diagram to draw.
+      Currently only 'stueve' is available.
+    :type diagram: str
+    :param kwargs: arguments passed to the diagram function
+
+
+      | Accepted names for pressure are:
+        'p', 'pp', 'P', 'PRES', 'PRESS', 'pressure'
+      | Accepted names for temperature are:
+        't', 'tt', 'T', 'TEMP', 'temperature'
+      | Accepted names for dewpoint are:
+        'td', 'TD', 'DWPT', 'dewpoint'
+      | Accepted names for dewpoint depression are:
+        'dtd', 'DTD', 'DPDP', 'spread'
+      | Accepted names for relative humidity are:
+        'rh', 'RH', 'RELH', 'relative humidity'
+
+    """
+    def _getcol(dataobject: dict | pd.DataFrame, names):
+        """
+
+        :type dataobject: object
+        """
+        for col in names:
+            if col in dataobject.columns:
+                res = dataobject[col]
+                break
+        else:
+            res = None
+        return res
+
+    p_names = ['p', 'pp', 'P', 'PRES', 'PRESS', 'pressure']
+    t_names = ['t', 'tt', 'T', 'TEMP', 'temperature']
+    td_names = ['td', 'TD', 'DWPT', 'dewpoint']
+    sp_names = ['dtd', 'DTD', 'DPDP', 'spread']
+    rh_names = ['rh', 'RH', 'RELH', 'relative humidity']
+
+    style = kwargs.pop('style', {})
+    if diagram is None:
+        diagram = 'stueve'
+        style = 'dwd_a4'
+
+    if isinstance(data, (pd.DataFrame, dict)):
+        p = _getcol(data, p_names)
+        t = _getcol(data, t_names)
+        td = _getcol(data, td_names)
+        sp = _getcol(data, sp_names)
+        rh = _getcol(data, rh_names)
+    else:
+        raise ValueError('data is fo unsopported type')
+
+    if td is None:
+        if sp is not None:
+            td = [xt - xsp for xt, xsp in zip(t, sp)]
+        elif rh is not None:
+            for xt, xp, xrh in zip(t, p, rh):
+                td = Humidity(t=xt, p=xp, rh=xrh).td(Kelvin=False)
+        else:
+            logger.warning('no humidty info')
+            td = [np.nan for x in t]
+
+    if np.nanmax(p) > 1500.:
+        t = [x/100. for x in p]    # -> hPa
+    if np.nanmax(t) > 100.:
+        t = [KtoC(x) for x in t]   # -> C
+    if np.nanmax(td) > 100.:
+        td = [KtoC(x) for x in td]  # -> C
+
+    if diagram == 'stueve':
+        stueve(p, t, td, style=style, **kwargs)

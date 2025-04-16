@@ -17,6 +17,7 @@ from ._version import __license__, __copyright__
 
 from . import _utils
 from . import constants
+from . import dataset
 from . import evapo
 from . import humidity
 from . import pressure
@@ -27,7 +28,8 @@ from . import thermodyn
 from . import wind
 from . import charts
 
-__all__ = ['_utils', 'constants', 'evapo', 'humidity', 'pressure', 'radiation',
+__all__ = ['_utils', 'constants', 'dataset',
+           'evapo', 'humidity', 'pressure', 'radiation',
            'temperature', 'standard', 'thermodyn', 'wind', 'charts',
            '__title__', '__description__', '__url__', '__version__',
            '__author__', '__author_email__',
