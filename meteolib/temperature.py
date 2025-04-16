@@ -10,10 +10,14 @@ from ._utils import _check
 from .constants import R, Tzero, cp
 from .pressure import _to_Pa
 
+"""Reference pressure for calculation of potential temperatures"""
+POTENTIAL_REFERENCE_PRESSURE = 100000.  # Pa
 
 # ---------------------------------------------------------------------
+
+
 def _to_K(t, Kelvin=None):
-    '''
+    """
     Returns the given Temperature in Kelvin
 
     :param t: Temperature
@@ -26,7 +30,7 @@ def _to_K(t, Kelvin=None):
     :rtype: float
     :raises ValueError: if Kelvin is not ``True``, ``False``, or ``None``
 
-    '''
+    """
     try:
         _check('t', t, 'float', nan=True)
     except ValueError:
@@ -152,7 +156,7 @@ def CtoF(t):
 
 
 # ---------------------------------------------------------------------
-def Tpot(t, p, Kelvin=None, hPa=False, pref=100000.):
+def Tpot(t, p, Kelvin=None, hPa=False, pref=POTENTIAL_REFERENCE_PRESSURE):
     '''
     Converts Temperature from Celsius to Kelvin
 
@@ -185,7 +189,7 @@ def Tpot(t, p, Kelvin=None, hPa=False, pref=100000.):
 # ---------------------------------------------------------------------
 
 
-def inv_Tpot(t, p, Kelvin=None, hPa=False, pref=100000.):
+def inv_Tpot(t, p, Kelvin=None, hPa=False, pref=POTENTIAL_REFERENCE_PRESSURE):
     '''
     Converts Temperature from Celsius to Kelvin
 

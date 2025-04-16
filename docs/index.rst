@@ -14,6 +14,12 @@ General
 .. automodule:: meteolib
    :members:
 
+Charts
+------
+
+.. automodule:: meteolib.charts
+   :members:
+
 Constants
 ---------
 
@@ -73,12 +79,18 @@ References
 .. [Bus1971] Businger, J. A., Wyngaard, J. C.,Izumi, Y. and Bradley, E. F., 1971:
     Flux-Profile Relationships in the Atmospheric Surface Layer. J. Atmos. Sci., **28**,
     181–189, 10.1175/1520-0469(1971)028<0181:fprita>2.0.co;2.
+.. [BaSt2913] Bakhshaii, A., and R. Stull, 2013: Saturated Pseudoadiabats --
+    A Noniterative Approximation. Journal of Applied Meteorology and Climatology, **52**,
+    5–15, 10.1175/jamc-d-12-062.1.
 .. [CODATA] NIST, 2018: 2018 CODATA recommended values,
     National Institute of Standards and Technology (NIST), Gaitersburg, MD, USA,
     web resource, retrieved 2019-10-05,
     url: https://physics.nist.gov/cuu/Constants/
 .. [Dak1972] Dake, J. M. K., 1972: Evaporative cooling of a body of water.
     Water Resources Research, **8**, 1087-1091, 10.1029/WR008i004p01087.
+.. [DavJo2008] Davies-Jones, R., 2008: An Efficient and Accurate Method for Computing
+    the Wet-Bulb Temperature along Pseudoadiabats. Monthly Weather Review,
+    **136**, 2764–2785, 10.1175/2007mwr2224.1.
 .. [Esp2006] Espenak F, Meeus J., 2006: Five millennium canon of solar
     eclipses: -1999 to +3000 (2000 BCE to 3000 CE),
     Report No.: NASA/TP–2009–214174, NASA Goddard Space Flight Center,

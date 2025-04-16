@@ -25,9 +25,10 @@ from . import standard
 from . import temperature
 from . import thermodyn
 from . import wind
+from . import charts
 
 __all__ = ['_utils', 'constants', 'evapo', 'humidity', 'pressure', 'radiation',
-           'temperature', 'standard', 'thermodyn', 'wind',
+           'temperature', 'standard', 'thermodyn', 'wind', 'charts',
            '__title__', '__description__', '__url__', '__version__',
            '__author__', '__author_email__',
            '__license__', '__copyright__',

@@ -7,6 +7,12 @@ import numpy as np
 
 import pandas as pd
 
+KIND_DTYPES = {"float": "float64",
+               "int": "int64",
+               "str": "string",
+               "datetime": "datetime64",
+               "bool": "boolean"}
+
 
 def _check_scalar(name, par, kind, lt=None, le=None, ne=None,
                   ge=None, gt=None, nan=True, none=False):
@@ -87,7 +93,11 @@ def _check(name, par, kind, lt=None, le=None, ne=None,
         return _check_scalar(name, par, kind, lt, le,
                              ne, ge, gt, nan, none)
     else:
-        res = pd.Series(np.nan, index=range(len(par)))
+        if hasattr(kind, 'dtype'):
+            res_type = par.dtype
+        else:
+            res_type = KIND_DTYPES[kind]
+        res = pd.Series(np.nan, index=range(len(par)), dtype=res_type)
         for i, p in enumerate(par):
             res.iloc[i] = _check_scalar(name, p, kind, lt, le,
                                         ne, ge, gt, nan, none)

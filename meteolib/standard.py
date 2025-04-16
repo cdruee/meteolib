@@ -41,8 +41,8 @@ _tab5 = pd.DataFrame.from_records([
     [80000, 0.886272, 1.57004E-5]],
     columns=["H", "p", "rho"])
 
-pzero_iso = 101325.
-R_iso = 287.05287
+pzero_iso = 101325.  # Pa
+R_iso = 287.05287    # K
 
 # ---------------------------------------------------------------------
 
@@ -63,7 +63,7 @@ def gphi(lat=None, h=0, deg=True):
     r"""
     Lambert's function for acceleration of gravity as function of latitude.
     Standard ("normal") gravity conforms with latitude
-    :math:`\phi = 45°32'33"`.
+    :math:`\phi = 45^\circ32'33"`.
     For height dependence, centrifugal acceleration is
     formally neglected and using only Newton’s gravitation law.
     Defined in ICAO/ANSI/ISO standard atmosphere [ISO2533]_
@@ -197,10 +197,10 @@ def p_barom(h, p_0=pzero_iso, T_0=_tab4["T_b"][1], h_0=0,
         hnull = h_0             # gpm
         alt = h                 # gpm
     gamma = beta                # K/m
-    pwr = - gphi() / (R_iso * gamma)
 
     if abs(gamma) > 1.E-6:  # i.e. is not zero
         # ISO 2533 eqn 12
+        pwr = - gphi() / (R_iso * gamma)
         pp = p_0 * (1. + (gamma * (alt - hnull) / Tnull)) ** pwr  # Pa
     else:
         # ISO 2533 eqn 13
@@ -218,12 +218,12 @@ def p_barom(h, p_0=pzero_iso, T_0=_tab4["T_b"][1], h_0=0,
 # ---------------------------------------------------------------------
 
 
-def p_iso(h, pzero=pzero_iso, gpm=False, hPa=False):
+def p_iso(h, p_0=None, gpm=False, hPa=False):
     """
     air pressure in the standard atmosphere at given height
 
     :param h: (float) height above sea level (altitude) (:math:`m`)
-    :param pzero: (float, optional) air pressure at sea level
+    :param p_0: (float, optional) air pressure at sea level
         (in hPa or Pa, depending on `hPa`).
         Defaults to `pzero_iso`
     :param gpm: (bool, optional) if True, h is given in gepotential meters,
@@ -236,6 +236,10 @@ def p_iso(h, pzero=pzero_iso, gpm=False, hPa=False):
     :return: air pressure (in hPa or Pa, depending on `hPa`).
     :rtype: float
     """
+    if p_0 is None:
+        pp_0 = pzero_iso             # Pa
+    else:
+        pp_0 = _to_Pa(p_0, hPa=hPa)  # Pa
     # geopotential height
     if not gpm:
         alt = h_geopot(h)  # gpm
@@ -244,12 +248,13 @@ def p_iso(h, pzero=pzero_iso, gpm=False, hPa=False):
     if alt < _tab4["H_b"][0]:
         integr = np.nan
     elif _tab4["H_b"][0] < alt < 0.:
-        integr = p_barom(alt, gpm=True, hPa=False)  # Pa
+        integr = p_barom(alt, p_0=pp_0, gpm=True, hPa=False)  # Pa
     else:
+        pfact = pp_0 / pzero_iso
         for i in reversed(_tab4.index[1:]):
             if alt >= _tab4["H_b"][i]:
                 integr = p_barom(h=alt,
-                                 p_0=_tab5["p"][i],
+                                 p_0=_tab5["p"][i] * pfact,
                                  h_0=_tab4["H_b"][i],
                                  T_0=_tab4["T_b"][i],
                                  beta=_tab4["beta"][i],
@@ -258,6 +263,8 @@ def p_iso(h, pzero=pzero_iso, gpm=False, hPa=False):
                                  hPa=False,
                                  )  # Pa
                 break
+        else:
+            return np.nan
     if hPa is True:
         p = integr / 100.
     else:
@@ -267,18 +274,21 @@ def p_iso(h, pzero=pzero_iso, gpm=False, hPa=False):
 # ---------------------------------------------------------------------
 
 
-def rho_iso(h, gpm=False):
+def rho_iso(h, p_0=pzero_iso, gpm=False):
     """
     density of dry air in the standard atmosphere at given height
 
     :param h: altitude (float) in m or gpm, depending on `gpm`
+    :param p_0: (float, optional) air pressure at base level
+        (in hPa or Pa, depending on `hPa`).
+        Defaults to `pzero_iso`
     :param gpm: (bool, optional)
         if ``True``, h is given in gepotential meters,
         if ``False`` h is given in gemetric height. Default to ``False``.
 
     :return: density in :math:`kg m^{-3}`
     """
-    return gas_rho(p_iso(h, gpm=gpm, hPa=False),
+    return gas_rho(p_iso(h, p_0=p_0, gpm=gpm, hPa=False),
                    T_iso(h, gpm=gpm, Kelvin=True),
                    q=0.,
                    Kelvin=True,
@@ -287,11 +297,14 @@ def rho_iso(h, gpm=False):
 # ---------------------------------------------------------------------
 
 
-def altitude(p, gpm=False, hPa=False):
+def altitude(p, p_0=None, gpm=False, hPa=False):
     """
     returns altitude (height above se level) as funtion of pressure
 
     :param p: (float) air pressure (in hPa or Pa, depending on `hPa`).
+    :param p_0: (float, optional) air pressure at base level
+        (in hPa or Pa, depending on `hPa`).
+        Defaults to `pzero_iso`
     :param gpm: (bool, optional) if ``True``,
         h is returned in gepotential meters,
         if ``False`` h is returned in gemetric height. Default to False.
@@ -301,14 +314,19 @@ def altitude(p, gpm=False, hPa=False):
       Defaults to ``False``.
     :return: altitude (float) in m or gpm, depending on `gpm`
     """
+    if p_0 is None:
+        pp_0 = pzero_iso             # Pa
+    else:
+        pp_0 = _to_Pa(p_0, hPa=hPa)  # Pa
     pp = _to_Pa(p, hPa=hPa)  # Pa
     if pp > _tab5["p"][0]:
         H = np.nan
     else:
         for i in reversed(_tab5.index):
-            if pp <= _tab5["p"][i]:
+            pi = _tab5["p"][i] * pp_0 / pzero_iso  # Pa
+            if pp <= pi:
                 beta = _tab4["beta"][i]  # K/m
-                p_0 = _tab5["p"][i]      # Pa
+                p_0 = pi      # Pa
                 H_0 = _tab4["H_b"][i]    # gpm
                 T_0 = _tab4["T_b"][i]    # K
                 if abs(beta) > 1.E-6:

@@ -1082,7 +1082,10 @@ class Humidity(object):
 
         tem = {x: loc[x] for x in ['t', 'ew']}
         if _only(tem, ['t']):
-            self.t = _check('t',   t, 'float', gt=-273.15)
+            if self.Kelvin:
+                self.t = _check('t', t, 'float', ge=0)
+            else:
+                self.t = _check('t',   t, 'float', gt=-273.15)
         elif _only(tem, ['ew']):
             self.t = _check('ew', ew, 'float', gt=0.)
         else:
@@ -1470,7 +1473,7 @@ class Humidity(object):
                   \\left( \\frac{p_0}{p} \\right)^{\\frac{R}{c_p}}
 
         '''
-        te = self.Tequi()
+        te = self.tequi()
 
         tep = Tpot(te, p=self.p, Kelvin=self.Kelvin, hPa=self.hPa)
 
