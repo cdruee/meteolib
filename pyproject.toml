@@ -1,3 +1,8 @@
 [build-system]
 requires = ["setuptools", "sphinx", "numpy", "pandas"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "meteolib"
+dynamic = ["authors", "dependencies", "description", "license", "keywords", "version"]
+readme = "README.md"

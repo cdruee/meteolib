@@ -83,3 +83,29 @@ def _to_hPa(p, hPa=None):
     else:
         raise ValueError('invalid value passed for "hPa": {}'.format(hPa))
     return p
+
+# ----------------------------------------------------------------------
+
+
+def pa2mmhg(pa: float) -> float:
+    """
+    Converts air pressure in Pascal to mmHg
+    :param pa: pressure in Pascal
+    :type pa: float
+    :return: air pressure in mmHg
+    :rtype: float
+    """
+    return pa / 133.322
+
+# ----------------------------------------------------------------------
+
+
+def mmhg2pa(mmhg: float) -> float:
+    """
+    Converts air pressure in mmHg to Pascal
+    :param mmhg: air pressure in mmHg
+    :type mmhg: float
+    :return: air pressure in Pascal
+    :rtype: float
+    """
+    return mmhg * 133.322

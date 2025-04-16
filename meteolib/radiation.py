@@ -13,6 +13,7 @@ earth's clock error values are taken from [Esp2006]_.
 import datetime as dt
 import logging
 
+import numpy
 import numpy as np
 
 import pandas as pd
@@ -20,11 +21,13 @@ import pandas as pd
 import pytz
 
 from ._utils import _check, _expand_to_series_like
+from .pressure import pa2mmhg
+from .constants import sigma
 
 
 # ---------------------------------------------------------------------
 
-def _clock_error(year: int):
+def _clock_error_formula(year: int):
     '''
     Calculate historical and future values of the earth's clock error
     This is the internal funtion accepting on single scalar
@@ -524,6 +527,174 @@ _NUTATION_PERIODIC_TERMS_PE = pd.DataFrame.from_records(
 )
 
 # ---------------------------------------------------------------------
+#: from [ASH1997]_
+_ASHRAE1997_ch29_table8 = pd.DataFrame.from_records(
+    columns=["soy", "I_r", "eot_min", "declination_deg", "A", "B", "C"],
+    data=[
+        (1728000.,  1416, -11.2, -20.0, 1230, 0.142, 0.058),
+        (4406400.,  1401, -13.9, -10.8, 1215, 0.144, 0.060),
+        (6825600.,  1381, -7.5, 0.0, 1186, 0.156, 0.071),
+        (9504000.,  1356, 1.1, 11.6, 1136, 0.180, 0.097),
+        (12096000., 1336, 3.3, 20.0, 1104, 0.196, 0.121),
+        (14774400., 1336, -1.4, 23.45, 1088, 0.205, 0.134),
+        (17366400., 1336, -6.2, 20.6, 1085, 0.207, 0.136),
+        (20044800., 1338, -2.4, 12.3, 1107, 0.201, 0.122),
+        (22723200., 1359, 7.5, 0.0, 1151, 0.177, 0.092),
+        (25315200., 1380, 15.4, -10.5, 1192, 0.160, 0.073),
+        (27993600., 1405, 13.8, -19.8, 1221, 0.149, 0.063),
+        (30585600, 1417, 1.6, -23.45, 1233, 0.142, 0.057),
+    ],
+)
+
+# ---------------------------------------------------------------------
+
+
+def _clear_sky_ashrae1997(time, lat, lon):
+    r"""
+    Return direct normal irradiance for a given time an position.
+
+    :param time: time for which to calculate clear sky irradiance
+    :type time: datetime64
+    :param lat: position latitude
+    :type lat: float
+    :param lon: position longitude
+    :type lon: float
+    :return: direct normal irradiance in W/m²
+    :rtype: float
+
+
+    Calculates direct normal irradiance, or solar irradiance,
+    :math:`E_{\{mathrm{DN}}}`
+    after 1997 ASHRAE Handbook [ASH97]_ chapter 29, eqn (15):
+
+    :math:`E_{\{mathrm{DN}}} ~=~ \frac{A}{exp \left( B / sin \beta\right)}`
+
+    where
+        :math:`A` = apparent solar irradiation at air mass m = 0 (Table 8)
+        :math:`B` = atmospheric extinction coefficient (Table 8)
+
+    """
+    # sun elevation, azimuth in degrees
+    ele, azi = fast_sun_position(time, lat, lon)
+
+    # estimate seconds of year to interpolate coefficients
+    seconds = (
+            time - pd.Timestamp(year=time.year, month=1, day=1,
+                                tz=time.tzinfo)
+    ).total_seconds()
+    coeffs = {x: np.interp(seconds,
+                           _ASHRAE1997_ch29_table8['soy'],
+                           _ASHRAE1997_ch29_table8[x])
+              for x in _ASHRAE1997_ch29_table8.columns
+              }
+
+    # irradiance
+    #
+    if ele >= 0.:
+        # sun above horizon
+        beta = numpy.deg2rad(ele)
+        e_dn = coeffs['A'] * np.exp(- coeffs['B'] / np.sin(beta))
+    else:
+        # sun below horizon
+        e_dn = 0.
+
+    return e_dn
+# ---------------------------------------------------------------------
+
+
+def _sfc_irrad_ashrae1997(time, lat, lon, heading, slant, albedo=None,
+                          _debug_angles=False):
+    r"""
+    Return direct and diffuse irradiance to a surface
+    on a clear day
+
+    :param time: time for which to calculate clear sky irradiance
+    :type time: datetime64
+    :param lat: position latitude
+    :type lat: float
+    :param lon: position longitude
+    :type lon: float
+    :param heading: surface heading angle in degrees clockwise from north
+    :type heading: float
+    :param slant: surface slant angle in degrees upwards from horizontal
+    :type slant: float
+    :param albedo: soil surface albedo in the area seen by the surface
+      in 1. Defaults to 0.15 (Arable land, grazing, mixed forests,
+      according to [HeS1983]_.
+    :type albedo: float
+    :return: direct normal irradiance in W/m²
+    :rtype: float
+
+
+    Calculates direct normal irradiance, or solar irradiance,
+    :math:`E_{\{mathrm{DN}}}`
+    after 1997 ASHRAE Handbook [ASH97]_ chapter 29, eqn (15):
+
+    :math:`E_{\{mathrm{DN}}} ~=~ \frac{A}{exp \left( B / sin \beta\right)}`
+
+    where
+        :math:`A` = apparent solar irradiation at air mass m = 0 (Table 8)
+        :math:`B` = atmospheric extinction coefficient (Table 8)
+
+    """
+    if albedo is None:
+        albedo = 0.15   # typical value for Central Europe
+
+    # sun elevation, azimuth in degrees
+    ele, azi = fast_sun_position(time, lat, lon)
+    #  surface-solar azimuth in radians
+    gamma = numpy.deg2rad(azi - heading)
+    # sun elevation in radians
+    beta = numpy.deg2rad(ele)
+    # surface tilt in radians (0= sfc facing up, pi/2= sfc facing horizon)
+    sigma = numpy.deg2rad(90 - slant)
+
+    # estimate seconds of year to interpolate coefficients
+    e_dn = _clear_sky_ashrae1997(time, lat, lon)
+
+    # estimate seconds of year to interpolate coefficients
+    seconds = (
+            time - pd.Timestamp(year=time.year, month=1, day=1,
+                                tz=time.tzinfo)
+    ).total_seconds()
+    coeffs = {x: np.interp(seconds,
+                           _ASHRAE1997_ch29_table8['soy'],
+                           _ASHRAE1997_ch29_table8[x])
+              for x in _ASHRAE1997_ch29_table8.columns
+              }
+
+    # surface incident angle (cosine thereof)
+    cos_theta = (np.cos(beta) * np.cos(gamma) * np.sin(sigma) +
+                 np.sin(beta) * np.cos(sigma))
+
+    if cos_theta > 0:
+        # sun is visible for surface
+        e_dir = cos_theta * e_dn
+    else:
+        e_dir = 0.
+
+    # ratio of vertical/horizontal sky diffuse
+    if cos_theta > -0.2:
+        yps = 0.55 + 0.437 * cos_theta + 0.313 * cos_theta**2
+    else:
+        yps = 0.45
+    # diffuse sky irradiance
+    e_ds = coeffs['C'] * yps * e_dn
+    # diffuse ground reflected irradiance
+    e_dg = e_dn * (coeffs['C'] +
+                   np.sin(ele) * albedo * (1 - np.cos(sigma))/2.
+                   )
+    # diffuse irradiance
+    e_diff = e_ds + e_dg
+
+    if _debug_angles:
+        return (e_dir, e_diff,
+                np.rad2deg(np.arccos(cos_theta)), np.rad2deg(gamma))
+
+    return e_dir, e_diff
+
+
+# ---------------------------------------------------------------------
 
 
 class _spa_location():
@@ -540,7 +711,7 @@ class _spa_location():
         self.timezone = (
             (time.utcoffset().seconds / 3600. + 12) %
             24) - 12
-        self.delta_T = _clock_error(time.year)
+        self.delta_T = _clock_error_formula(time.year)
         self.ut = self.utc + pd.Timedelta(self.delta_T, unit='seconds')
         self.jd = _spa_julian_day(self.utc)
         self.jde = _spa_julian_ephemeris_day(self)
@@ -1451,10 +1622,157 @@ def clock_error(time):
     '''
     time_i = pd.to_datetime(time)
     if pd.api.types.is_scalar(time_i):
-        res = _clock_error(time_i.year)
+        res = _clock_error_formula(time_i.year)
     else:
-        res = pd.Series([_clock_error(x.year) for x in time_i])
+        res = pd.Series([_clock_error_formula(x.year) for x in time_i])
     return res
+
+# ----------------------------------------------------
+
+
+def clear_sky_direct_normal(time, lat, lon, model="ashrae1997"):
+    """
+    Return direct normal irradiance on a clear day
+
+    :param time: time for which to calculate clear sky irradiance
+    :type time: datetime64
+    :param lat: position latitude
+    :type lat: float
+    :param lon: position longitude
+    :type lon: float
+    :param model: name of the irradiance model to use.
+      Currentlity implemented:
+      - ``ashrae1997`` from [ASH1997]_
+
+      Defaults to ``ashrae1997``.
+    :type model: str
+    :return: direct normal irradiance in W/m²
+    :rtype: float
+    """
+
+    if model == "ashrae1997":
+        return _clear_sky_ashrae1997(time, lat, lon)
+    else:
+        raise ValueError("unknown model: %s" % model)
+
+# ----------------------------------------------------
+
+
+def shortwave_incoming(time, lat, lon, heading, slant,
+                       albedo=None, model="ashrae1997"):
+    """
+    Return direct and diffuse irradiance to a surface that is
+    oriented in the direction described by heading and slant.
+
+    :param time: time for which to calculate clear sky irradiance
+    :type time: datetime64
+    :param lat: position latitude
+    :type lat: float
+    :param lon: position longitude
+    :type lon: float
+    :param model: name of the irradiance model to use.
+      Currentlity implemented:
+      - ``ashrae1997`` from [ASH1997]_
+
+      Defaults to ``ashrae1997``.
+    :type model: str
+    :return: direct normal irradiance in W/m²
+    :rtype: float
+    """
+
+    if model == "ashrae1997":
+        return _sfc_irrad_ashrae1997(time, lat, lon,
+                                     heading, slant, albedo)
+    else:
+        raise ValueError("unknown model: %s" % model)
+
+# ----------------------------------------------------
+
+
+def longwave_incoming(t_k: float, e=0.,
+                      model="angstrom"):
+    r"""
+    Calculate the clear-sky logwave downwelling radiation
+    (counter radiation) using a formula form a choice of authors
+
+    :param t_k: air temperature in K
+    :type t_k: float
+    :param e: water wapor partial pressure in Pa
+    :type e: float
+    :param model: name of the function to use
+    :type model: str
+    :return: longwave downwelling radiation in W/m
+    :rtype: float
+
+    angstrom:
+        Formula by [Ang1916]_ depending on air temperature and humidity:
+
+        :math:`L_{\mathrm{down}} = `
+        :math:`0.434 - 0.158 \times 10^{-0.071 \rho} \frac{T_k^4}{293^4}`
+
+        where :math:`\rho` is water vapor pressure in mmHg
+        and :math:`T_k` is temperature in K
+
+    swinbank:
+        Formula by [Swi1963]_ depending on air temperature alone:
+
+        :math:`L_{\mathrm{down}} = 5.31 \times 10^{-14} \, T^6`
+
+        where :math:`T_k` is temperature in K
+        and where :math:`L_{\mathrm{down}}` is in mW/cm²
+        (The function returns the result is in W/m², though)
+
+    brutsaert
+        Formula by [Bru1975]_ depending on air temperature and humidity:
+
+        :math:`L_{\mathrm{down}} = `
+        :math:`\sigma T_k^4 ~ 1.24 {\frac{e}{T_k}}^{\frac{1}{7}}`
+
+        where :math:`e` is water vapor pressure in Pa
+        and :math:`T_k` is temperature in K
+
+    aubinet
+        Formula by [Aub1994]_ depending on humidity:
+
+        :math:`L_{\mathrm{down}} =  \sigma T_s^4` with
+        :math:`T_s = 147 + 18.2 log(e)`
+
+        where :math:`e` is water vapor pressure in Pa
+
+    """
+    if model == "angstrom":
+        rho = pa2mmhg(e)
+        # ANGSTRÖM, A. 1916: Über die Gegenstrahlung der Atmosphäre
+        # (On the counter-radiation of the atmosphere). - Meteorol. Z. 33,
+        # 529-538 (translated and edited by VOLKEN, E., S. BRÖNNIMANN,
+        # R. PHILIPONA). – Meteorol. Z. 22 (2013),
+        # 761–769 (published online January 2014).
+        l_down = ((0.434 - 0.158 * 10 ** (- 0.071 * rho)) *
+                  (t_k ** 4) / (293. ** 4))
+    elif model == "swinbank":
+        # W. C. Swinbank, “Long-wave radiation from clear skies,”
+        # Quarterly Journal of the Royal Meteorological Society,
+        # vol. 89, no. 381, pp. 339–348, 1963, doi: 10.1002/qj.49708938105.
+        # there: 5.31E-14 mW/cm² * T^6
+        l_down = sigma * 9.36E-6 * t_k ** 6
+    elif model == "brutsaert":
+        # W. Brutsaert, “On a derivable formula for long‐wave radiation
+        # from clear skies,” Water Resources Research,
+        # vol. 11, no. 5, pp. 742–744, Oct. 1975,
+        # doi: 10.1029/wr011i005p00742.
+        e_hPa = e / 100.
+        l_down = (sigma * t_k ** 4) * 1.24 * (e_hPa / t_k) ** (1. / 7.)
+    elif model == "aubinet":
+        #  M. Aubinet, “Longwave sky radiation parametrizations,”
+        #  Solar Energy, vol. 53, no. 2, pp. 147–154, Aug. 1994,
+        #  doi: 10.1016/0038-092x(94)90475-8.
+        #  one variable model that hast the same funtional
+        #  form as the recommended as three-variable model
+        ts = 147. + 18.2 * np.log(e)
+        l_down = (sigma * ts ** 4)
+    else:
+        raise ValueError("unknown method: %s" % model)
+    return l_down
 
 # ----------------------------------------------------
 

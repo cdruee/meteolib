@@ -76,6 +76,19 @@ References
     Appendix A: Physical Constants and Functions For Use in Marine Meteorology,
     U.S. Army Cold Regions Research and Engineering Laboratory Hanover,
     New Hampshire, USA, 43pp.
+.. [Ang1916] Angström, A. 1916: Über die Gegenstrahlung der Atmosphäre
+    (On the counter-radiation of the atmosphere),
+    translated and edited by Volken, E., S. Brönnimann, R. Philipona,
+    Meteorol. Z., **22** (2013) 761–769, doi: 10.1127/0941-2948/2013/0550
+.. [ASH1997] ASHRAE, 1997;
+    ASHRAE Handbook : Fundamentals,
+    American Society of Heating, Refrigerating and Air-Conditioning Engineers,
+    Peachtree Corners, GA, USA, 851pp.
+.. [Aub1994] Aubinet, M., 1994: Longwave sky radiation parametrizations,
+    Solar Energy, **53** (2), 147–154, doi: 10.1016/0038-092x(94)90475-8.
+.. [Bru1975] Brutsaert, W., 1975: On a derivable formula for long‐wave
+    radiation from clear skies, Water Resources Research,
+    **11** (5), 742–744, doi: 10.1029/wr011i005p00742.
 .. [Bus1971] Businger, J. A., Wyngaard, J. C.,Izumi, Y. and Bradley, E. F., 1971:
     Flux-Profile Relationships in the Atmospheric Surface Layer. J. Atmos. Sci., **28**,
     181–189, 10.1175/1520-0469(1971)028<0181:fprita>2.0.co;2.
@@ -108,7 +121,10 @@ References
 .. [HeS1984] Henderson-Sellers, B., 1984: A new formula for latent heat
     of vaporization of water as a function of temperature.
     Q J Roy Meteorol Soc, **110**, 1186-1190, 10.1002/qj.49711046626.
-.. [Hög1985] Högström, U., 1985: Von Kármán's Constant in Atmospheric
+.. [HeS1983] Henderson‐Sellers, A. & Wilson, M. F., 1983:
+    Surface albedo data for climatic modeling,
+    Reviews of Geophysics, **21** (8), 1743-1778, 10.1029/rg021i008p01743.
+.. [Hog1985] Högström, U., 1985: Von Kármán's Constant in Atmospheric
     Boundary Layer Flow: Reevaluated. J. Atmos. Sci., **42**, 263–270,
     10.1175/1520-0469(1985)042<0263:VKCIAB>2.0.CO;2
 .. [Hog1988] Högström, U., 1988. Non-dimensional wind and temperature profiles in
@@ -123,9 +139,9 @@ References
 .. [ICAO7488] ICAO, 1993: Manual of the ICAO Standard Atmosphere - extended
     to 80 kilometres / 262,500 feet. Doc 7488, 3rd Edition,
     International Civil Aviation Organization, Montréal, Québec, Canada.
-.. [ITS-90] Bureau International des Poids et Mesures/Comité Consultatif de
+.. [ITS90] Bureau International des Poids et Mesures/Comité Consultatif de
     Thermométrie, 1990: The International Temperature Scale of 1990
-    (ITS-90) (H. Preston Thomas). Metrologia, **27**, 3 - 10.
+    (ITS90) (H. Preston Thomas). Metrologia, **27**, 3 - 10.
 .. [ISO2533] International Organization for Standardization, 1975:
     Standard Atmosphere. ISO standard 2533:1975, 108pp.
 .. [MAR2009]  A. Tejeda Martínez, 2009:
@@ -150,22 +166,25 @@ References
     doi: 10.2172/15003974
 .. [Son1990] Sonntag, D., 1990: Important new Values of the
     Physical Constants of 1986, Vapour Pressure Formulations based on the
-    ITS-90, and Psychrometer Formulae, Z. Meteorol., **70**, 340 - 344.
+    ITS90, and Psychrometer Formulae, Z. Meteorol., **70**, 340 - 344.
 .. [Son1994] Sonntag, D., 1994: Advancements in the field of hygrometry,
     Meteorologische Zeitschrift, **3**, 51-66, doi: 10.1127/metz/3/1994/51
 .. [Stu1988] Stull, R. B., 1988:
     An Introduction to Boundary-Layer Meteorology,
     Kluwer Academic Publishers and Doordrecht, Netherlands, 666pp.
+.. [Swi1963] Swinbank,  W. C., 1963: ong-wave radiation from clear skies,
+    Quarterly Journal of the Royal Meteorological Society, **89** (381),
+    339–348, doi: 10.1002/qj.49708938105.
 .. [Tet1930] Tetens, O. 1930. Über einige meteorologische Begriffe.
     Z. Geophys, **6**, 207 - 309.
 .. [WaP2002] Wagner, W. & Pruß, A., 2002: The IAPWS Formulation 1995
     for the Thermodynamic Properties of Ordinary Water Substance for
     General and Scientific Use, Journal of Physical and Chemical Reference
     Data, **31**, 387 – 535, doi: 10.1063/1.1461829
-.. [WMO_8] World Meteorological Organization, 2014: Guide to Meteorological
+.. [WMO8] World Meteorological Organization, 2014: Guide to Meteorological
     Instruments and Methods of Observation,  WMO-No. 8, World
     Meteorological Organization (WMO), Geneva, Switzerland, 1177pp.
-.. [WMO_49] World Meteorological Organization, (WMO), 2012:
+.. [WMO49] World Meteorological Organization, (WMO), 2012:
     Technical Regulations, Basic Documents No. 2, Volume I -
     General meteorological standards and recommended practices,
     Appendix A, WMO-No. 49, 2011, updated 2012,
@@ -182,6 +201,7 @@ References
     University of Florida,
     Institute of Food and Agricultural Sciences (IFAS),
     Gainesville, Florida, USA, 10pp.
+
 
 
 Indices and tables

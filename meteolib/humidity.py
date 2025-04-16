@@ -23,7 +23,7 @@ def _f(p):
     :return: correction factor. If `p` is ``None``, the value 1. is returned.
 
     This form of the equation was adopted by Forty-second session of the
-    Executive Council (EC-XLII) in 1990 [WMO_8]_:
+    Executive Council (EC-XLII) in 1990 [WMO8]_:
     .. math::
       f (p) = 1.001 6 + 3.15 · 10 –6 p – 0.074 p –1
 
@@ -70,7 +70,7 @@ def magnus_w(t, Kelvin=None, p=None, hPa=False):
       or missing
 
     This form of the equation was adopted by Forty-second session of the
-    Executive Council (EC-XLII) in 1990 [WMO_8]_:
+    Executive Council (EC-XLII) in 1990 [WMO8]_:
 
     .. math::
       e = f(p) * 6.112 * np.exp((17.62 * t) / (243.12 + t))
@@ -122,7 +122,7 @@ def magnus_i(t, Kelvin=None, p=None, hPa=False):
       or missing
 
     This form of the equation was adopted by Forty-second session of the
-    Executive Council (EC-XLII) in 1990 [WMO_8]_:
+    Executive Council (EC-XLII) in 1990 [WMO8]_:
 
     .. math::
       e = 6.112 * np.exp((22.46 * t) / (272.62 + t))
@@ -207,7 +207,7 @@ def tetens_i(t, Kelvin=None, p=None, hPa=False):
 def goff_gratch_w(t, Kelvin=None, p=None, hPa=False):
     '''
     Goff-Gratch formula, identical to :py:meth:`meltib.humidity.magnus_w`,
-    except formula provided by [Gof1957]_, cited from [WMO_49]_:
+    except formula provided by [Gof1957]_, cited from [WMO49]_:
 
     .. math::
 
@@ -242,7 +242,7 @@ def goff_gratch_w(t, Kelvin=None, p=None, hPa=False):
 def goff_gratch_i(t, Kelvin=None, p=None, hPa=False):
     '''
     Goff-Gratch formula, identical to :py:meth:`meltib.humidity.magnus_i`,
-    except formula provided by [Gof1957]_, cited from [WMO_49]_:
+    except formula provided by [Gof1957]_, cited from [WMO49]_:
 
     .. math::
 
@@ -594,7 +594,6 @@ def get_esat():
     :return: name of the function set.
     :rtype: character
     '''
-    global _esat
     return _esat
 
 
@@ -733,7 +732,7 @@ def psychro(t, tw, Kelvin=None, p=None, hPa=False):
       or missing
 
     This form of the equation was adopted by Forty-second session of the
-    Executive Council (EC-XLII) in 1990 [WMO_8]_:
+    Executive Council (EC-XLII) in 1990 [WMO8]_:
 
     .. math::
 
@@ -792,7 +791,7 @@ def psychro_ice(t, ti, Kelvin=None, p=None, hPa=False):
       or missing
 
     This form of the equation was adopted by Forty-second session of the
-    Executive Council (EC-XLII) in 1990 [WMO_8]_:
+    Executive Council (EC-XLII) in 1990 [WMO8]_:
 
     .. math::
 
@@ -1260,7 +1259,7 @@ class Humidity(object):
         Since there is no closed analytical solution, we use the
         iterative method of [MAR2009]_,
         adapted for use with the Magnus formula :eq:`magnus` for
-        saturation water vapor from [WMO_8]_:
+        saturation water vapor from [WMO8]_:
 
         1) set inital value
 
@@ -1326,7 +1325,7 @@ class Humidity(object):
         Since there is no closed analytical solution, we use the
         iterative method of [MAR2009]_,
         adapted for use with the Magnus formula :eq:`magnice` for
-        saturation water vapor from [WMO_8]_:
+        saturation water vapor from [WMO8]_:
 
         1) set inital value
 

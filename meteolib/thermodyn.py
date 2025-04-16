@@ -336,8 +336,8 @@ def Lvt(t, Kelvin=None, source="andreas"):
       "the Lv values are within 0.3% of the Smithsonian
       values for temperatures from 0° to 60°C".
 
-      :math:`L_{v} ~=~ \left( 25.00 - 0.02274 ~ \vartheta \right)
-            \times 10^{5}`
+      :math:`L_{v} ~=~ `
+      :math:`\left( 25.00 - 0.02274 ~ \vartheta \right) \times 10^{5}`
 
     henderson-sellers
       A different for of fit is given by [HeS1984]_:
@@ -345,7 +345,7 @@ def Lvt(t, Kelvin=None, source="andreas"):
       :math:`L_{v} ~=~ 1.91846E6 \left(T/\left(T-33.91\right)\right)^2`
 
     ecpack
-      ecpack by Arain va Dijk and Arnold Moene uses:
+      ecpack by Arain van Dijk and Arnold Moene uses:
 
       :math:`L_{v} ~=~ \left(2501 - 2.375 \vartheta\right) 10^3`
 

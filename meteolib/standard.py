@@ -160,25 +160,26 @@ def p_barom(h, p_0=pzero_iso, T_0=_tab4["T_b"][1], h_0=0,
             gpm=False, Kelvin=None, hPa=None):
     r"""
     barometric height formula
+
     :param h: (float) height above sea level (altitude) (:math:`m`)
     :param p_0: (float, optional) air pressure at base level
-        (in hPa or Pa, depending on `hPa`).
-        Defaults to `pzero_iso`
+      (in hPa or Pa, depending on `hPa`).
+      Defaults to `pzero_iso`
     :param T_0: (float, optional) air temperature at base level
-        in :math:`K` or :math:`^\circ C` , depending on `Kelvin` .
-        Defaults to 288.15 K.
+      in :math:`K` or :math:`^\circ C` , depending on `Kelvin` .
+      Defaults to 288.15 K.
     :param h_0: (float, optional) height of the base level
-        above sea level (altitude of the base level) (:math:`m`).
-        Defaults to 0 m.
+      above sea level (altitude of the base level) (:math:`m`).
+      Defaults to 0 m.
     :param beta: (float, optional) vertical temperature gradient
-        (:math:`K m^{-1}`). Defaults to 0.0065 :math:`K m^{-1}`.
+      (:math:`K m^{-1}`). Defaults to 0.0065 :math:`K m^{-1}`.
     :param gpm: (bool, optional) if True, h is given in gepotential meters,
-        if False h is given in gemetric height. Default to False.
+      if False h is given in gemetric height. Default to False.
     :param Kelvin: (optional, optional)
-        if ``False``, all temperatures are assumed to be Kelvin.
-        If ``False``, all temperatures are assumed to be Celsius.
-        If missing of ``None``, unit  temperatures are autodetected.
-        Defaults to ``None``.
+      if ``False``, all temperatures are assumed to be Kelvin.
+      If ``False``, all temperatures are assumed to be Celsius.
+      If missing of ``None``, unit  temperatures are autodetected.
+      Defaults to ``None``.
     :param hPa: (optional, optional)
       if ``True``,  `p`, `e`, or `ew` must be supplied in hPa.
       If ``False``, `p`, `e`, or `ew` must be supplied in Pa.

@@ -404,6 +404,7 @@ def vectormean(ff=None, dd=None, pairs=None):
     '''
     returns vector mean of wind vectors given by means of speed an direction
     or lists of speed and direction
+
     :param ff: wind speed in any unit,
       requires `dd` (array-like, same lenght as `dd`)
     :param dd: wind direction in degrees,

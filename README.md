@@ -1,5 +1,5 @@
-metlib
-======
+meteolib
+========
 
 A python module conatins standard equations, constants and conversions adopted or recommended by the [World meteorological Organization (WMO)](http://www.wmo.int) for general use in meteorology.
 

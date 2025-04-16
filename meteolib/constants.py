@@ -15,28 +15,28 @@ sigma = 5.570367E-8
 #: Absolute temperature (:math:`K`)
 #: of the normal ice point
 #: Offset between Kelvin and Celsius Tmeperature scales.
-#: Adopted by WMO in [WMO_8]_.
+#: Adopted by WMO in [WMO8]_.
 Tzero = 273.15
 
 #: Absolute temperature (:math:`K`)
 #: of the triple point of water
-#: by definition of [ITS-90]_.
-#: Adopted by WMO in [WMO_8]_.
+#: by definition of [ITS90]_.
+#: Adopted by WMO in [WMO8]_.
 Ttriple = 273.16
 
 
 #:  Standard acceleration of gravity (:math:`m s^{-2}`).
-#:  Adopted by WMO in [WMO_8]_.
+#:  Adopted by WMO in [WMO8]_.
 gn = 9.806
 
 #: Density of mercury (:math:`kg m^{–3}`) at 0 °C.
-#: Adopted by WMO in [WMO_8]_.
+#: Adopted by WMO in [WMO8]_.
 rhoHg = 1.35951E4
 
 #: Reference pressure (:math:`Pa`).
 #: One of the typical references levels --
 #: Mean Sea Level (MSL), station altitude or the 1013.2 hPa plane.
-#: -- adopted by WMO in [WMO_8]_.
+#: -- adopted by WMO in [WMO8]_.
 pzero = 101320.
 
 # ----------------------------------------------------------------------
@@ -123,13 +123,13 @@ Mco2 = 44.0095E-3
 #: calculated from `Rstar` and `Mco2`.
 Rco2 = Rstar/Mco2
 
-#: von-Karman constant. Re-evaluated value by [Hög1985]_
+#: von-Karman constant. Re-evaluated value by [Hog1985]_
 kappa = 0.40
 
 #: Solar constant (:math:`W m^{-2}`)
-#: a sysnonym for mean extra-terrestrial solar irradiance.
+#: a synonym for mean extra-terrestrial solar irradiance.
 #: said to be defined by WMO and used in WMO documents
-#: and many reserch papares, no immediate source.
+#: and many research papers, no immediate source.
 solar = 1367.
 
 #: Eart's nominal radius (m)

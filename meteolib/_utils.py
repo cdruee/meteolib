@@ -11,7 +11,7 @@ KIND_DTYPES = {
     "float": "float64",
     "int": "int64",
     "str": "string",
-    "datetime": "datetime64[ns]",
+    "datetime": "datetime64[ns, UTC]",
     "bool": "boolean",
 }
 
