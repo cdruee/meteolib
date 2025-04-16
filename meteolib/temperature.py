@@ -30,7 +30,7 @@ def _to_K(t, Kelvin=None):
     try:
         _check('t', t, 'float', nan=True)
     except ValueError:
-        return(np.nan)
+        return np.nan
     if Kelvin is None:
         # autodetect
         if np.all(np.less(t, 150.)):
@@ -40,8 +40,8 @@ def _to_K(t, Kelvin=None):
     elif Kelvin is True:
         pass
     else:
-        raise(ValueError('invalid value for "Kelvin": %s' % format(Kelvin)))
-    return(t)
+        raise ValueError('invalid value for "Kelvin": %s' % format(Kelvin))
+    return t
 
 # ---------------------------------------------------------------------
 
@@ -64,7 +64,7 @@ def _to_C(t, Kelvin=None):
     try:
         _check('t', t, 'float', nan=True)
     except ValueError:
-        return(np.nan)
+        return np.nan
     if Kelvin is None:
         # autodetect
         if t >= 150.:
@@ -74,8 +74,8 @@ def _to_C(t, Kelvin=None):
     elif Kelvin is True:
         t = t - Tzero
     else:
-        raise(ValueError('invalid value for "Kelvin": %s' % format(Kelvin)))
-    return(t)
+        raise ValueError('invalid value for "Kelvin": %s' % format(Kelvin))
+    return t
 
 # ---------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ def KtoC(t):
     :rtype: float
 
     '''
-    return(_to_C(t, Kelvin=True))
+    return _to_C(t, Kelvin=True)
 
 # ---------------------------------------------------------------------
 
@@ -105,7 +105,7 @@ def CtoK(t):
     :rtype: float
 
     '''
-    return(_to_K(t, Kelvin=False))
+    return _to_K(t, Kelvin=False)
 
 # ---------------------------------------------------------------------
 
@@ -126,8 +126,8 @@ def FtoC(t):
     try:
         _check('t', t, 'float')
     except ValueError:
-        return(np.nan)
-    return((t - 32.0) * 5./9.)
+        return np.nan
+    return (t - 32.0) * 5./9.
 
 
 # ---------------------------------------------------------------------
@@ -147,8 +147,8 @@ def CtoF(t):
     try:
         _check('t', t, 'float')
     except ValueError:
-        return(np.nan)
-    return(t*1.80 + 32)
+        return np.nan
+    return t*1.80 + 32
 
 
 # ---------------------------------------------------------------------
@@ -179,8 +179,8 @@ def Tpot(t, p, Kelvin=None, hPa=False, pref=100000.):
     Theta = T * (pref / pp)**(R/cp)
 
     if Kelvin is False:
-        return(_to_C(Theta, Kelvin=True))
-    return(_to_K(Theta, Kelvin=True))
+        return _to_C(Theta, Kelvin=True)
+    return _to_K(Theta, Kelvin=True)
 
 # ---------------------------------------------------------------------
 
@@ -212,5 +212,5 @@ def inv_Tpot(t, p, Kelvin=None, hPa=False, pref=100000.):
     T = Theta / (pref / pp)**(R/cp)
 
     if Kelvin is False:
-        return(_to_C(T, Kelvin=True))
-    return(_to_K(T, Kelvin=True))
+        return _to_C(T, Kelvin=True)
+    return _to_K(T, Kelvin=True)

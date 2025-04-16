@@ -122,7 +122,7 @@ class LogWind(object):
         '''
         z = _check('z', z, 'float', ge=0.)
         u = (self.ust / kappa) * np.log((z-self.d)/self.z0)
-        return(u)
+        return u
 
     def gradu(self, z):
         '''
@@ -134,7 +134,7 @@ class LogWind(object):
         '''
         z = _check('z', z, 'float', ge=0.)
         u = self.ust / (kappa * (z - self.d))
-        return(u)
+        return u
 
 # -------------------------------------------------------------------
 
@@ -354,7 +354,7 @@ def charnock(ust):
     ust = _check('ust', ust, 'float', ge=0.)
     alpha_c = 0.015  # Charnock parameter
     z0 = alpha_c * (ust**2) / gn
-    return(z0)
+    return z0
 
 # -------------------------------------------------------------------
 
@@ -374,7 +374,7 @@ def transfer(wind, z0, d=0.):
     Refheight = 250.  # m
     uref = wind.u(Refheight)
     new = LogWind(u=uref, z=Refheight, z0=z0, d=d)
-    return(new)
+    return new
 
 # -------------------------------------------------------------------
 
@@ -409,7 +409,7 @@ def vectormean(ff=None, dd=None, pairs=None):
     fm = np.sqrt(umean**2 + vmean**2)
     dm = np.rad2deg(np.arctan2(-umean, -vmean))
 
-    return(fm, dm)
+    return fm, dm
 
 # -------------------------------------------------------------------
 

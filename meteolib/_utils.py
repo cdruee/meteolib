@@ -110,11 +110,11 @@ def _only(pars, sel, ign=[]):
         raise TypeError('parameter "pars" must be dict')
     for x in sel:
         if pars[x] is None:
-            return(False)
+            return False
     for k, v in pars.items():
         if k not in sel and k not in ign and v is not None:
-            return(False)
-    return(True)
+            return False
+    return True
 
 
 def _expand_to_series_like(val, like):

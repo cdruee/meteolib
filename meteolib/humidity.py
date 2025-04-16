@@ -87,9 +87,9 @@ def magnus_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -139,9 +139,9 @@ def magnus_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -168,9 +168,9 @@ def tetens_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -197,9 +197,9 @@ def tetens_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -232,9 +232,9 @@ def goff_gratch_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -266,9 +266,9 @@ def goff_gratch_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -303,9 +303,9 @@ def hyland_wexler_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e / 100.)  # hPa
+        return e / 100.  # hPa
     else:
-        return(e)  # Pa
+        return e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -343,9 +343,9 @@ def hyland_wexler_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e / 100.)  # hPa
+        return e / 100.  # hPa
     else:
-        return(e)  # Pa
+        return e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -378,9 +378,9 @@ def sonntag_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -414,9 +414,9 @@ def sonntag_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 
 # ---------------------------------------------------------------------
@@ -455,9 +455,9 @@ def iapws_w(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -495,9 +495,9 @@ def iapws_i(t, Kelvin=None, p=None, hPa=False):
     if p is not None:
         e = _f(_to_hPa(p, hPa)) * e
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 
 # ---------------------------------------------------------------------
@@ -515,17 +515,17 @@ def esat_w(*args, esat=_esat, **kwargs):
     if esat is None:
         esat = _esat
     if esat == 'goff_gratch':
-        return(goff_gratch_w(*args, **kwargs))
+        return goff_gratch_w(*args, **kwargs)
     elif esat == 'hyland_wexler':
-        return(hyland_wexler_w(*args, **kwargs))
+        return hyland_wexler_w(*args, **kwargs)
     elif esat == 'iapws':
-        return(iapws_w(*args, **kwargs))
+        return iapws_w(*args, **kwargs)
     elif esat == 'magnus':
-        return(magnus_w(*args, **kwargs))
+        return magnus_w(*args, **kwargs)
     elif esat == 'sonntag':
-        return(sonntag_w(*args, **kwargs))
+        return sonntag_w(*args, **kwargs)
     elif esat == 'tetens':
-        return(tetens_w(*args, **kwargs))
+        return tetens_w(*args, **kwargs)
     else:
         raise RuntimeError('esat = {} not known'.format(esat))
 
@@ -544,17 +544,17 @@ def esat_i(*args, esat=_esat, **kwargs):
         Defaults to `None`.
     '''
     if esat == 'goff_gratch':
-        return(goff_gratch_i(*args, **kwargs))
+        return goff_gratch_i(*args, **kwargs)
     elif esat == 'hyland_wexler':
-        return(hyland_wexler_i(*args, **kwargs))
+        return hyland_wexler_i(*args, **kwargs)
     elif esat == 'iapws':
-        return(iapws_i(*args, **kwargs))
+        return iapws_i(*args, **kwargs)
     elif esat == 'magnus':
-        return(magnus_i(*args, **kwargs))
+        return magnus_i(*args, **kwargs)
     elif esat == 'sonntag':
-        return(sonntag_i(*args, **kwargs))
+        return sonntag_i(*args, **kwargs)
     elif esat == 'tetens':
-        return(tetens_i(*args, **kwargs))
+        return tetens_i(*args, **kwargs)
     else:
         raise RuntimeError('esat = {} not known'.format(esat))
 
@@ -595,7 +595,7 @@ def get_esat():
     :rtype: character
     '''
     global _esat
-    return(_esat)
+    return _esat
 
 
 # ---------------------------------------------------------------------
@@ -645,9 +645,9 @@ def tdew(e, p=None, hPa=False, Kelvin=True):
             (17.62 - np.log(e / (6.112*_f(p))))  # C
 
     if Kelvin is False:
-        return(_to_C(t, Kelvin=False))  # °C
+        return _to_C(t, Kelvin=False)  # °C
     else:
-        return(_to_K(t, Kelvin=False))  # K
+        return _to_K(t, Kelvin=False)  # K
 
 # ---------------------------------------------------------------------
 
@@ -698,9 +698,9 @@ def tfrost(e, p=None, hPa=False, Kelvin=True):
             (22.46 - np.log(e / (6.112 * _f(p))))  # C
 
     if Kelvin is False:
-        return(_to_C(t, Kelvin=False))  # °C
+        return _to_C(t, Kelvin=False)  # °C
     else:
-        return(_to_K(t, Kelvin=False))  # K
+        return _to_K(t, Kelvin=False)  # K
 
 # ---------------------------------------------------------------------
 
@@ -757,9 +757,9 @@ def psychro(t, tw, Kelvin=None, p=None, hPa=False):
         (1 + 0.000944 * tw) * p1 * (t - tw)  # hPa
 
     if hPa is True:
-        return(e)
+        return e
     else:
-        return(e * 100.)
+        return e * 100.
 
 # ---------------------------------------------------------------------
 
@@ -816,9 +816,9 @@ def psychro_ice(t, ti, Kelvin=None, p=None, hPa=False):
         5.75E-4 * p1 * (t - ti)  # hPa
 
     if hPa is True:
-        return(e)  # hPa
+        return e  # hPa
     else:
-        return(100. * e)  # Pa
+        return 100. * e  # Pa
 
 
 # ---------------------------------------------------------------------
@@ -886,9 +886,9 @@ def mixr(e, p, gkg=False):
     m = 0.62198 * e / p
 
     if gkg is True:
-        return(m * 1000.)  # g/kg
+        return m * 1000.  # g/kg
     else:
-        return(m)  # 1
+        return m  # 1
 
 
 # ---------------------------------------------------------------------
@@ -929,9 +929,9 @@ def inv_mixr(m, p, hPa=False, gkg=False):
     e = mm * pp / 0.62198
 
     if hPa is True:
-        return(e / 100.)  # hPa
+        return e / 100.  # hPa
     else:
-        return(e)  # Pa
+        return e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -967,9 +967,9 @@ def spech(e, p, gkg=False):
     q = 0.62198 * e / (e * 0.622 + p)  # 1
 
     if gkg is True:
-        return(q * 1000.)  # g/kg
+        return q * 1000.  # g/kg
     else:
-        return(q)  # 1
+        return q  # 1
 
 # ---------------------------------------------------------------------
 
@@ -1011,9 +1011,9 @@ def inv_spech(q, p, hPa=False, gkg=False):
     e = qq * pp / (0.62198 * (1 - qq))
 
     if hPa is True:
-        return(e / 100.)  # hPa
+        return e / 100.  # hPa
     else:
-        return(e)  # Pa
+        return e  # Pa
 
 # ---------------------------------------------------------------------
 
@@ -1140,9 +1140,9 @@ class Humidity(object):
         rh = relhum(self.e, e_w)
 
         if percent is True:
-            return(rh * 100.)
+            return rh * 100.
         else:
-            return(rh)
+            return rh
 
     # ---------------------------------------------------------------------
     def m(self, gkg=None):
@@ -1163,7 +1163,7 @@ class Humidity(object):
 
         m = mixr(self.e, self.p, gkg=gkg)
 
-        return(m)
+        return m
 
     # ---------------------------------------------------------------------
     def q(self, gkg=None):
@@ -1184,7 +1184,7 @@ class Humidity(object):
 
         q = spech(self.e, self.p, gkg=gkg)
 
-        return(q)
+        return q
 
     # ---------------------------------------------------------------------
     def td(self, Kelvin=None):
@@ -1208,9 +1208,9 @@ class Humidity(object):
         td = tdew(self.e, p=self.p, hPa=self.hPa, Kelvin=Kelvin)
 
         if Kelvin is None or Kelvin is True:
-            return(_to_K(td, Kelvin=Kelvin))
+            return _to_K(td, Kelvin=Kelvin)
         else:
-            return(_to_C(td, Kelvin=Kelvin))
+            return _to_C(td, Kelvin=Kelvin)
 
     # ---------------------------------------------------------------------
     def tf(self, Kelvin=None):
@@ -1235,9 +1235,9 @@ class Humidity(object):
         tf = tfrost(self.e, p=self.p, hPa=self.hPa, Kelvin=Kelvin)
 
         if Kelvin is None or Kelvin is True:
-            return(_to_K(tf, Kelvin=Kelvin))
+            return _to_K(tf, Kelvin=Kelvin)
         else:
-            return(_to_C(tf, Kelvin=Kelvin))
+            return _to_C(tf, Kelvin=Kelvin)
 
     # ---------------------------------------------------------------------
     def tw(self, Kelvin=None):
@@ -1301,9 +1301,9 @@ class Humidity(object):
             tw = np.nan
 
         if Kelvin is False:
-            return(tw)
+            return tw
         else:
-            return(_to_K(tw, Kelvin=False))
+            return _to_K(tw, Kelvin=False)
 
     # ---------------------------------------------------------------------
     def ti(self, Kelvin=None):
@@ -1365,9 +1365,9 @@ class Humidity(object):
             ti = np.nan
 
         if Kelvin is False:
-            return(ti)
+            return ti
         else:
-            return(_to_K(ti, Kelvin=False))
+            return _to_K(ti, Kelvin=False)
 
     # ---------------------------------------------------------------------
     def virt_inc(self):
@@ -1383,7 +1383,7 @@ class Humidity(object):
 
         vi = T * 0.61 * qq
 
-        return(vi)
+        return vi
 
     # ---------------------------------------------------------------------
     def tvirt(self, Kelvin=None):
@@ -1410,9 +1410,9 @@ class Humidity(object):
         Tv = T + vi  # K
 
         if Kelvin is False:
-            return(_to_C(Tv, Kelvin=True))
+            return _to_C(Tv, Kelvin=True)
         else:
-            return(_to_K(Tv, Kelvin=True))
+            return _to_K(Tv, Kelvin=True)
 
     # ---------------------------------------------------------------------
     def tequi(self, Kelvin=None):
@@ -1442,9 +1442,9 @@ class Humidity(object):
         Te = T + mm * Lv / cp
 
         if Kelvin is False:
-            return(_to_C(Te, Kelvin=True))
+            return _to_C(Te, Kelvin=True)
         else:
-            return(_to_K(Te, Kelvin=True))
+            return _to_K(Te, Kelvin=True)
 
     # ---------------------------------------------------------------------
     def tequipot(self, Kelvin=None):
@@ -1474,7 +1474,7 @@ class Humidity(object):
 
         tep = Tpot(te, p=self.p, Kelvin=self.Kelvin, hPa=self.hPa)
 
-        return(tep)
+        return tep
 
     # ---------------------------------------------------------------------
     def rhow(self):
@@ -1488,7 +1488,7 @@ class Humidity(object):
         rw = gas_rho(self.e, self.t, gas='water',
                      Kelvin=self.Kelvin, hPa=self.hPa)
 
-        return(rw)
+        return rw
 
 # ---------------------------------------------------------------------
 

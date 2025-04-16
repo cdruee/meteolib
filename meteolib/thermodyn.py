@@ -63,9 +63,9 @@ def gas_p(rho, T, q=None, Kelvin=None, hPa=False, gkg=False, gas='air'):
     p = rho * Rgas * Tgas
 
     if hPa is True:
-        return(_to_hPa(p, hPa=False))
+        return _to_hPa(p, hPa=False)
     else:
-        return(p)
+        return p
 
 
 def gas_rho(p, T, q=None, Kelvin=None, hPa=False, gkg=False, gas='air'):
@@ -118,7 +118,7 @@ def gas_rho(p, T, q=None, Kelvin=None, hPa=False, gkg=False, gas='air'):
 
     rho = pgas / (Rgas * Tgas)
 
-    return(rho)
+    return rho
 
 
 def gas_t(p, rho, q=None, Kelvin=None, hPa=False, gas='air'):
@@ -163,9 +163,9 @@ def gas_t(p, rho, q=None, Kelvin=None, hPa=False, gas='air'):
         raise RuntimeError('not yet implemented')
 
     if Kelvin is True:
-        return(T)
+        return T
     else:
-        return(_to_C(T, Kelvin=True))
+        return _to_C(T, Kelvin=True)
 
 # ----------------------------------------------------------------------
 # not so constant constants
@@ -204,7 +204,7 @@ def cpt(t, Kelvin=None):
     # equation (A20) in Garrat, J.R., 1992. 'The Atmospheric Boundary
     #     layer', Cambridge University Press:
     # cp = 1005.16 + 0.013763 * th + 2.97265E-4 * (th**2)
-    return(cp)
+    return cp
 
 # ----------------------------------------------------------------------
 
@@ -226,8 +226,8 @@ def cpvt(t, Kelvin=None):
 
     .. math::
 
-      c_{pv} ~=~ 1858 + 3.820 \\times 10^{-1} T + 4.220
-      \\times 10^{-4} T^2 - 1.996 \\times 10^{-7} T^3
+      c_{pv} ~=~ 1858 + 3.820 \times 10^{-1} T + 4.220
+      \times 10^{-4} T^2 - 1.996 \times 10^{-7} T^3
 
     "should be accurate for all near-surface atmospheric temperatures"
     [And2006]_.
@@ -238,7 +238,7 @@ def cpvt(t, Kelvin=None):
     #
     th = _to_C(t, Kelvin=Kelvin)
     cp = 1858 + 3.820E-1*th + 4.220E-4 * (th**2) - 1.996E-7*(th**3)
-    return(cp)
+    return cp
 
 # ----------------------------------------------------------------------
 
@@ -261,7 +261,7 @@ def cwt(t, Kelvin=None):
     .. math::
 
       c_{w} ~=~ 4217.4 - 3.720283 T^2 - 2.654387
-      \\times 10^{-3} T^3 + 2.093236 \\times 10^{-5} T^4
+      \times 10^{-3} T^3 + 2.093236 \times 10^{-5} T^4
 
     "should be accurate for all near-surface atmospheric temperatures"
     [And2006]_.
@@ -272,7 +272,7 @@ def cwt(t, Kelvin=None):
     #
     th = _to_C(t, Kelvin=Kelvin)
     cw = 4217.4 - 3.720283 * th**2 - 2.654387E-3 * th**3 + 2.093236E-5 * th**4
-    return(cw)
+    return cw
 
 # ----------------------------------------------------------------------
 
@@ -295,7 +295,7 @@ def cit(t, Kelvin=None):
     .. math::
 
       c_{w} ~=~ -114.19 + 8.1288 T + 3.421 T~
-      \\exp \\left[ -(T/125.1)^2 \\right]
+      \exp \left[ -(T/125.1)^2 \right]
 
     "should be accurate for all near-surface atmospheric temperatures"
     [And2006]_.
@@ -307,7 +307,7 @@ def cit(t, Kelvin=None):
     th = _to_K(t, Kelvin=Kelvin)
     # here : th in K !
     ci = -114.19 + 8.1288 * th + 3.421 * th * np.exp(-(th/125.1)**2)
-    return(ci)
+    return ci
 
 # ----------------------------------------------------------------------
 
@@ -336,23 +336,23 @@ def Lvt(t, Kelvin=None, source="andreas"):
       "the Lv values are within 0.3% of the Smithsonian
       values for temperatures from 0° to 60°C".
 
-      :math:`L_{v} ~=~ \\left( 25.00 - 0.02274 \\vartheta \\right)
-      \\times 10^{5}`
+      :math:`L_{v} ~=~ \left( 25.00 - 0.02274 ~ \vartheta \right)
+            \times 10^{5}`
 
     henderson-sellers
       A different for of fit is given by [HeS1984]_:
 
-      :math:`L_{v} ~=~ 1.91846E6 \\left(T/\\left(T-33.91\\right)\\right)^2`
+      :math:`L_{v} ~=~ 1.91846E6 \left(T/\left(T-33.91\right)\right)^2`
 
     ecpack
       ecpack by Arain va Dijk and Arnold Moene uses:
 
-      :math:`L_{v} ~=~ \\left(2501 - 2.375 \\vartheta\\right) 10^3`
+      :math:`L_{v} ~=~ \left(2501 - 2.375 \vartheta\right) 10^3`
 
     dake
       a linear fit to the Smithonian tables is presented by [Dak1972]_:
 
-      :math:`L_{v} ~=~ \\left(2501 - 2.357*\\vartheta\\right) 10^3`
+      :math:`L_{v} ~=~ \left(2501 - 2.357*\vartheta\right) 10^3`
 
     hyland-wexler
       The American Society of Heating, Refrigerating and
@@ -363,15 +363,15 @@ def Lvt(t, Kelvin=None, source="andreas"):
       .. math::
         :nowrap:
 
-         \\begin{eqnarray*}
-         L_{v} &=& 3139.817121 \\\\
-               &-& 2.390755077 * T \\\\
-               &+& 4.3309357163E-4 * T^2 \\\\
-               &-& 1.573317502E-6 * T^3 \\\\
-               &+& 2.94377462234E-9 * T^4 \\\\
-               &-& 1.7508262E-12 * T^5 \\\\
-               &+& 6.059E-7 * (T - 403.128)^3
-         \\end{eqnarray*}
+        \begin{eqnarray*}
+        L_{v} &=& 3139.817121 \\
+              &-& 2.390755077 * T \\
+              &+& 4.3309357163E-4 * T^2 \\
+              &-& 1.573317502E-6 * T^3 \\
+              &+& 2.94377462234E-9 * T^4 \\
+              &-& 1.7508262E-12 * T^5 \\
+              &+& 6.059E-7 * (T - 403.128)^3 \\
+        \end{eqnarray*}
 
     '''
     t = _check('t', t, 'float', ge=0.)
@@ -424,7 +424,7 @@ def Lvt(t, Kelvin=None, source="andreas"):
     else:
         raise ValueError('evaporation heat source {} unknown'.format(source))
 
-    return(Lv)
+    return Lv
 
 # ----------------------------------------------------------------------
 
@@ -452,7 +452,7 @@ def Lst(t, Kelvin=None, source="andreas"):
       [And2006]_ gives for Use in Marine Meteorology and states
       "the Ls values are within 0.2% of the Smithsonian
       values for temperatures from -50° to 0°C".
-      :math:`L_{s} ~=~ \\left( 28.34 - 0.00149 T \\right) \\times 10^{5}`
+      :math:`L_{s} ~=~ \left( 28.34 - 0.00149 T \right) \times 10^{5}`
 
     hyland-wexler
       The American Society of Heating, Refrigerating and
@@ -463,14 +463,14 @@ def Lst(t, Kelvin=None, source="andreas"):
       .. math::
         :nowrap:
 
-         \\begin{eqnarray*}
-         L_{v} &=&  2645.475 \\\\
-           &+& 1.5292786 * T \\\\
-           &-& 0.00254657837 * T^2 \\\\
-           &-& 2.5511992E-6 * T^3 \\\\
-           &+& 2.8726608E-9 * T^4 \\\\
+         \begin{eqnarray*}
+         L_{v} &=&  2645.475 \\
+           &+& 1.5292786 * T \\
+           &-& 0.00254657837 * T^2 \\
+           &-& 2.5511992E-6 * T^3 \\
+           &+& 2.8726608E-9 * T^4 \\
            &-& 1.7508262E-12 * T^5
-         \\end{eqnarray*}
+         \end{eqnarray*}
 
 
     '''
@@ -501,4 +501,4 @@ def Lst(t, Kelvin=None, source="andreas"):
     else:
         raise ValueError('sublimation heat source {} unknown'.format(source))
 
-    return(Ls)
+    return Ls

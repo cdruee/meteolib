@@ -21,12 +21,13 @@ from . import evapo
 from . import humidity
 from . import pressure
 from . import radiation
+from . import standard
 from . import temperature
 from . import thermodyn
 from . import wind
 
 __all__ = ['_utils', 'constants', 'evapo', 'humidity', 'pressure', 'radiation',
-           'temperature', 'thermodyn', 'wind',
+           'temperature', 'standard', 'thermodyn', 'wind',
            '__title__', '__description__', '__url__', '__version__',
            '__author__', '__author_email__',
            '__license__', '__copyright__',

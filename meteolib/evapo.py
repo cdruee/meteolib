@@ -189,7 +189,7 @@ def penmanmonteith_mono(T, rh, vh, p, Kdn, time=None, df=None,
     cur['ET0'] = cur['ETwind'] + cur['ETrad']
     # in mm day^-1
 
-    return(cur['ET0'])
+    return cur['ET0']
 
 
 def penmanmonteith(T, rh, vh, p, Kdn, time=None, df=None,
@@ -356,4 +356,4 @@ def penmanmonteith(T, rh, vh, p, Kdn, time=None, df=None,
     cur['ET0'] = cur['ETwind'] + cur['ETrad']
     # in mm day^-1
 
-    return(cur['ET0'])
+    return cur['ET0']

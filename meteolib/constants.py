@@ -125,8 +125,13 @@ Rco2 = Rstar/Mco2
 
 #: von-Karman constant. Re-evaluated value by [Hög1985]_
 kappa = 0.40
+
 #: Solar constant (:math:`W m^{-2}`)
 #: a sysnonym for mean extra-terrestrial solar irradiance.
 #: said to be defined by WMO and used in WMO documents
 #: and many reserch papares, no immediate source.
 solar = 1367.
+
+#: Eart's nominal radius (m)
+#: Defined in [ISO2533]_
+r_earth = 6356766

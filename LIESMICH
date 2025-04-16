@@ -1,0 +1,14 @@
+### Bump version:
+  - edit meteolib/_version.py
+  - git commit
+  - git tag X.X.X
+
+### Build package:
+
+rm -rv deb_dist/
+python setup.py --command-packages=stdeb.command sdist_dsc
+pushd deb_dist/
+tar -czvf python-meteolib.tar.gz meteolib-*
+mv python-meteolib.tar.gz ~/pbuilder/incoming/
+popd
+build-all-packages

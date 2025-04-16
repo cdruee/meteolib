@@ -30,9 +30,9 @@ def _to_Pa(p, hPa=None):
 
     '''
     if p is None:
-        return(None)
+        return None
     if pd.isnull(p):
-        return(np.nan)
+        return np.nan
     if hPa is None:
         # autodetect
         if p < 1500.:
@@ -42,8 +42,8 @@ def _to_Pa(p, hPa=None):
     elif hPa is True:
         p = p * 100.
     else:
-        raise(ValueError('invalid value passed for "hPa": {}'.format(hPa)))
-    return(p)
+        raise ValueError('invalid value passed for "hPa": {}'.format(hPa))
+    return p
 
 # ---------------------------------------------------------------------
 
@@ -69,9 +69,9 @@ def _to_hPa(p, hPa=None):
 
     '''
     if p is None:
-        return(None)
+        return None
     if pd.isnull(p):
-        return(np.nan)
+        return np.nan
     if hPa is None:
         # autodetect
         if p >= 1500.:
@@ -81,5 +81,5 @@ def _to_hPa(p, hPa=None):
     elif hPa is True:
         pass
     else:
-        raise(ValueError('invalid value passed for "hPa": {}'.format(hPa)))
-    return(p)
+        raise ValueError('invalid value passed for "hPa": {}'.format(hPa))
+    return p

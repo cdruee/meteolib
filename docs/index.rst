@@ -44,6 +44,12 @@ Temperature
 .. automodule:: meteolib.temperature
    :members:
 
+Standard Atmosphere
+-------------------
+
+.. automodule:: meteolib.standard
+   :members:
+
 Thermodynamics
 --------------
 
@@ -99,9 +105,14 @@ References
 .. [HyW1983] R. Hyland & A. Wexler, 1983:
     Formulations for the Thermodynamic Properties of the Saturated
     Phases of H2O from 173.5 K to 473.5 K. ASHRAE Transactions, **89** (2A), 20 pp.
+.. [ICAO7488] ICAO, 1993: Manual of the ICAO Standard Atmosphere - extended
+    to 80 kilometres / 262,500 feet. Doc 7488, 3rd Edition,
+    International Civil Aviation Organization, Montréal, Québec, Canada.
 .. [ITS-90] Bureau International des Poids et Mesures/Comité Consultatif de
     Thermométrie, 1990: The International Temperature Scale of 1990
     (ITS-90) (H. Preston Thomas). Metrologia, **27**, 3 - 10.
+.. [ISO2533] International Organization for Standardization, 1975:
+    Standard Atmosphere. ISO standard 2533:1975, 108pp.
 .. [MAR2009]  A. Tejeda Martínez, 2009:
     On the evaluation of the wet bulb temperature as a function of
     dry bulb temperature and relative humidity.

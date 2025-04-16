@@ -1,72 +1,114 @@
+# template: helloworld 1.0.1
+
+workflow:
+  rules: # Run pipeline only if a tag is pushed by "git push --tags"
+    - if: $CI_COMMIT_TAG
+
 stages:
   - build
   - test
   - deploy
-  - release
-
-variables:
-  PACKAGE_VERSION: "$CI_COMMIT_TAG"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/dist/${PACKAGE_VERSION}"
 
 build_sdist:
   image: python:latest
   stage: build
-  rules:
-    - if: $CI_COMMIT_TAG
   script:
     - python setup.py sdist
+    - echo 'ls dist/*tar.gz'
+    - ls dist/*tar.gz
+    - echo 'cd dist && ls *tar.gz'
+    - echo "$( cd dist && ls *tar.gz )"
+    - echo "BUILD_VERSION=$( cd dist && ls *tar.gz )" >> build.env
+    - echo "BUILD_JOB=${CI_JOB_ID}" >> build.env
   artifacts:
     paths:
       - dist
-
-test_latest:
-  image: python:latest
-  stage: test
-  rules:
-    - if: $CI_COMMIT_TAG
+    reports:
+      dotenv: build.env 
+ 
+build_bdist_deb:
+  image: ubuntu:focal
+  stage: build
+  needs:     
+    - job: build_sdist
+      artifacts: true 
   script:
-    - pip install tox numpy pandas flake8
-    - tox
+    - export DEBIAN_FRONTEND=noninteractive
+    - apt update
+    - apt-get -y install dh-python debhelper
+    - apt-get -y install python-all
+    - apt-get -y install python3-numpy python3-pandas
+    - apt-get -y install python3-setuptools python3-all python3-stdeb
+    - export DEB_BUILD_OPTIONS=nocheck
+    - python3 setup.py bdist_deb
+    - rm -r deb_dist/*/
+    - echo "BUILD_DEB_VERSION=$( cd deb_dist && ls *deb )" >> build.env
+    - echo "BUILD_DEB_JOB=${CI_JOB_ID}" >> build.env
+  artifacts:
+    paths:
+      - deb_dist
+    reports:
+      dotenv: build.env 
 
-
-dploy_pages:
+build_pages:
   image: python:latest
-  stage: deploy
-  rules:
-    - if: $CI_COMMIT_TAG
+  stage: build
   script:
-    - pip install numpy pandas
     - pip install sphinx
+    - pip install numpy pandas
     - python setup.py build_sphinx
     - mv build/sphinx/html/ public/
   artifacts:
     paths:
     - public
-
-deploy_upload:
-  stage: deploy
-  image: python:latest # curlimages/curl:latest
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/  # Run if tah is v0.00.00...
+      
+test_latest:
+  image: python:latest
+  stage: test
   script:
-    - apt install curl
-    - export PACKAGE_FILE=$( ls dist/ )
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/${PACKAGE_FILE} "${PACKAGE_REGISTRY_URL}/${PACKAGE_FILE}"
-    - mkdir cache
-    - echo "${PACKAGE_FILE}" > cache/PACKAGE_FILE
+    - pip install tox numpy pandas flake8
+    - tox
+
+pages:
+  image: python:latest
+  stage: deploy
+  rules:   # Run if tag is v0.00.00.. indicating a release
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/  
+  needs:     
+    - job: build_pages
+      artifacts: true
+    - job: test_latest
+  script:
+    - touch public
   artifacts:
     paths:
-    - cache
+    - public
 
-release_release:
+    
+release:
   image: registry.gitlab.com/gitlab-org/release-cli:latest
-  stage: release
-  rules:
-    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/  # Run if tah is v0.00.00...
+  stage: deploy
+  rules:   # Run if tag is v0.00.00.. indicating a release
+    - if: $CI_COMMIT_TAG =~ /^v[0-9]*\.[0-9]*\.[0-9]*.*/ 
   script:
     - echo "Running the release job."
-    - export PACKAGE_FILE=$( cat cache/PACKAGE_FILE )
-    - echo "-#$PACKAGE_FILE#-"
-    - |
-      release-cli create --description "$CI_COMMIT_TAG" --tag-name "$PACKAGE_VERSION" --assets-link "{\"url\":\"${PACKAGE_REGISTRY_URL}/${PACKAGE_FILE}\",\"name\":\"Python install package: ${PACKAGE_FILE}\",\"link_type\":\"package\"}"
+  needs:     
+    - job: build_sdist
+      artifacts: true 
+    - job: build_bdist_deb
+      artifacts: true 
+    - job: test_latest
+  release:      # See https://docs.gitlab.com/ee/ci/yaml/#release for available properties
+     name: '$CI_COMMIT_TAG'
+     description: '$CI_COMMIT_DESCRIPTION'
+     tag_name: '$CI_COMMIT_TAG'
+     ref: '$CI_COMMIT_TAG'
+     assets:
+       links:
+         - name: "Python install package: ${BUILD_VERSION}"
+           type: 'package'       
+           url: '${CI_PROJECT_URL}/-/jobs/${BUILD_JOB}/artifacts/raw/dist/${BUILD_VERSION}'
+         - name: "Debian/ubuntu package: ${BUILD_DEB_VERSION}"
+           type: 'package'       
+           url: '${CI_PROJECT_URL}/-/jobs/${BUILD_DEB_JOB}/artifacts/raw/deb_dist/${BUILD_DEB_VERSION}'
+           
