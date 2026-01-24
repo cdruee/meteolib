@@ -283,7 +283,7 @@ def phi_m(zoL):
     if zoL > 0.:
         phi = 1. + phi_1s * zoL
     elif zoL < 0.:
-        phi = (1. - phi_1u * zoL) ^ (-1./4.)
+        phi = (1. - phi_1u * zoL) ** (-1./4.)
     else:  # if zoL == 0.
         phi = 1.
     return phi
@@ -308,7 +308,7 @@ def phi_H(zoL):
     if zoL > 0.:
         phi = phi_0 + phi_1s * zoL
     elif zoL < 0.:
-        phi = phi_0 * (1. - phi_1u * zoL) ^ (-1./2.)
+        phi = phi_0 * (1. - phi_1u * zoL) ** (-1./2.)
     else:  # if zoL == 0.
         phi = phi_0
     return phi
